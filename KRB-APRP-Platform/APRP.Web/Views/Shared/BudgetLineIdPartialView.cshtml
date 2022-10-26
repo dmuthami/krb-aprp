@@ -1,0 +1,71 @@
+﻿@model APRP.Web.Domain.Models.RoadWorkBudgetLine
+
+@{
+    if (Model.ID > 0)
+    {
+        <h5>Edit Budget Line Item </h5>
+    }
+    else
+    {
+<h5>New Budget Line Item </h5>
+    }
+
+}
+<form id="budgetLineForm">
+    @Html.HiddenFor(m => m.ID)
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.DropDownListFor(m => m.FundingSourceId, ViewBag.FundingSourceList as SelectList, "Please choose")
+
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.DropDownListFor(m => m.FundTypeId, ViewBag.FundTypeList as SelectList, "Please choose")
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.RoutineMaintanance, new { @class = "validate active" })
+            @Html.LabelFor(m => m.RoutineMaintanance, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.PeriodicMentanance, new { @class = "validate active" })
+            @Html.LabelFor(m => m.PeriodicMentanance, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.SpotImprovement , new { @class = "validate active" })
+            @Html.LabelFor(m => m.SpotImprovement, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.StructureConstruction, new { @class = "validate active" })
+            @Html.LabelFor(m => m.StructureConstruction, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.RehabilitationWork, new { @class = "validate active" })
+            @Html.LabelFor(m => m.RehabilitationWork, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.NewStructure, new { @class = "validate active" })
+            @Html.LabelFor(m => m.NewStructure, new { @class = "active" })
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('select').formSelect();
+    });
+</script>

@@ -1,0 +1,120 @@
+﻿@model APRP.Web.ViewModels.PlanActivityViewModel
+<div class="row">
+    <div class="col s5">
+        <p class="caption">
+            Work plan item activities for Selected road section
+        </p>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col s12 p-1">
+        <table id="data-table-unit-activities" class="striped display">
+            <thead>
+                <tr class="grey black-text">
+                    <th>Start Chain</th>
+                    <th>End Chain</th>
+                    <th>Technology</th>
+                    <th>Item Code</th>
+                    <th>Sub Item</th>
+                    <th>S/ Sub Item</th>
+                    <th>Description</th>
+                    <th>Unit Description</th>
+                    <th>Unit Measure</th>
+                    <th>Quantity</th>
+                    <th>Rate</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.PlanActivities.Any())
+                {
+                    @foreach (var activity in Model.PlanActivities.OrderBy(i=>i.ID))
+                    {
+                <tr>
+                    <td>@activity.StartChainage</td>
+                    <td>@activity.EndChainage</td>
+                    <td >@(activity.Technology != null ? activity.Technology.Code : "")</td>
+                    <td>@activity.ItemActivityUnitCost.ItemCode</td>
+                    <td>@activity.ItemActivityUnitCost.SubItemCode</td>
+                    <td>@activity.ItemActivityUnitCost.SubSubItemCode</td>
+                    <td>@activity.ItemActivityUnitCost.Description</td>
+                    <td>@activity.ItemActivityUnitCost.UnitDescription</td>
+                    <td>@activity.ItemActivityUnitCost.UnitMeasure</td>
+                    <td>@activity.Quantity</td>
+                    <td>KSHS @activity.Rate.ToString("N")</td>
+                    <td>KSHS @activity.Amount.ToString("N")</td>
+                    <td class="center-align">
+                        <a href="#!" onclick="ShowSectionPlanActivityEdit(@activity.ID)"><i class="material-icons pink-text">mode_edit</i></a> &nbsp;
+                    </td>
+                </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="12">There are no activity records to display. Add Activities</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="12">
+
+                        <div class="col s5">
+                            <a href="#!" onclick="GetItemActivitySelect()" class="waves-effect waves-light btn"><i class="material-icons right">gps_fixed</i>Add Item Activity</a>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var SubmitSelectedActivities = function (sectionId, seletectedIds) {
+        console.log(seletectedIds);
+        // let keys = Array.from( seletectedIds.keys() );
+        $.ajax(
+            {
+                type: "POST",
+                url: "/Workplan/UpdateSelectedItemActivities",
+                data: {
+                    seletectedIds: seletectedIds,
+                    sectionId: sectionId
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.success) {
+                        window.location.href = data.href;
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Cancelled',
+                            icon: "error",
+                        });
+                    }
+                }
+            });
+    }
+
+    //getting the selected rows
+    var GetItemActivitySelect = function () {
+        var urlLocation = "/Workplan/GetItemActivitySelect";
+        $("#modalViewBodyDiv").load(urlLocation, function () {
+            $("#modalViewId").modal('open');
+        });
+    }
+
+  
+     //show work plan activity edit for planning
+
+    var ShowSectionPlanActivityEdit = function (sectionPlanId) {
+        var urlLocation = "/Workplan/ShowRoadWorkPlanLineAddEdit?SectionPlanActivityId=" + sectionPlanId;
+       
+        $("#modalViewPlanEditBodyDivId").load(urlLocation, function () {
+            $("#modalViewPlanId").modal('open');
+        });
+    }
+</script>

@@ -1,0 +1,64 @@
+﻿@model APRP.Web.ViewModels.ReleaseViewModel
+
+<table class="display" id="page-length-option2">
+    <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Tranche ID
+            </th>
+            <th>
+                Authority
+            </th>
+            <th>
+                Budget Code
+            </th>
+            <th>
+                Budget Vote
+            </th>
+            <th>
+                Financial Year
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.ReleaseDisbursements != null)
+        {
+            @if (Model.ReleaseDisbursements.Any())
+            {
+                foreach (var item in Model.ReleaseDisbursements)
+                {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DisbursementTrancheId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Authority.Code) -
+                @Html.DisplayFor(modelItem => item.Authority.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BudgetCeilingComputation.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BudgetCeilingComputation.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FinancialYear.Code)
+            </td>
+            <td>
+                <a onclick="RemoveDisbursementFromRelease(ReleaseId=@Model.Release.ID, DisbursementId=@item.ID)">
+                    <i class="material-icons pink-text">delete</i>
+                </a>
+            </td>
+        </tr>
+                }
+            }
+        }
+    </tbody>
+</table>

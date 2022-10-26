@@ -1,0 +1,48 @@
+﻿@model APRP.Web.Domain.Models.Director
+
+<div class="row">
+    <form id="directorForm" class="col s12">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m => m.ContractorId)
+        <h4 class="card-title">Director Details</h4>
+        <div class="row">
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.IdCardNumber, new { @class = "validate active" })
+                @Html.LabelFor(m => m.IdCardNumber, new { @class = "active" })
+            </div>
+
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.FirstName, new { @class = "validate active" })
+                @Html.LabelFor(m => m.FirstName, new { @class = "active" })
+            </div>
+
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.MiddleName, new { @class = "validate active" })
+                @Html.LabelFor(m => m.MiddleName, new { @class = "active" })
+            </div>
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.LastName, new { @class = "validate active" })
+                @Html.LabelFor(m => m.LastName, new { @class = "active" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col m6 s12">
+                <p>
+                    <label>
+                        @Html.RadioButtonFor(m => m.Gender, "M")
+                        <span>@Html.Label("Male")</span>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        @Html.RadioButtonFor(m => m.Gender, "F")
+                        <span> @Html.Label("Female")</span>
+                    </label>
+                </p>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+  
+</script>

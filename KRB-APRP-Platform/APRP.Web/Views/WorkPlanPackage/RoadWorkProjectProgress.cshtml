@@ -1,0 +1,1109 @@
+﻿@model APRP.Web.ViewModels.WorkPlanPackageContractViewModel;
+@using APRP.Web.Domain.Models;
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Packaging Contracts";
+    Layout = "~/Views/Shared/_Layout_App.cshtml";
+}
+
+
+@section vendorCss
+{
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/extensions/responsive/css/responsive.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/css/select.dataTables.min.css">
+}
+
+@section customCss
+{
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/css/pages/app-chat.css">
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/css/pages/data-tables.css">
+    <link href="~/asset_default/app-assets/vendors/sweetalert/sweetalert.css" type="text/css" rel="stylesheet" />
+}
+
+@section aside
+{
+    <!-- BEGIN: SideNav-->
+    <aside class="sidenav-main nav-expanded nav-lock nav-collapsible sidenav-dark sidenav-active-rounded">
+
+        <div class="brand-sidebar">
+            <h1 class="logo-wrapper">
+                <a class="brand-logo darken-1" asp-controller="Home" asp-action="Dashboard">
+                    <img src="~/asset_default/app-assets/images/logo/menu-logo.png" alt="REPARS logo" /><span class="logo-text hide-on-med-and-down">REPARS</span>
+                </a>
+                <a class="navbar-toggler" href="#"><i class="material-icons">radio_button_checked</i></a>
+            </h1>
+        </div>
+
+        <ul class="sidenav sidenav-collapsible leftside-navigation collapsible sidenav-fixed menu-shadow" id="slide-out" data-menu="menu-navigation" data-collapsible="accordion">
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Home" asp-action="Dashboard"><i class="material-icons">home</i><span id="idHomeAuthority" class="menu-title" data-i18n="">Home</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan" href="#">
+                    <i class="material-icons">timeline</i>
+                    <span class="menu-title" data-i18n="">Road Networks</span>
+                </a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        <li>
+                            <a asp-controller="Road" asp-action="Index" data-i18n="" class="collapsible-body">
+                                <i class="material-icons">radio_button_unchecked</i><span>Road Network</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="collapsible-header waves-effect waves-cyan" href="#">
+                                <i class="material-icons">radio_button_unchecked</i>
+                                <span class="menu-title" data-i18n="">Road Classification</span>
+                            </a>
+                            <div class="collapsible-body">
+                                <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadClassCodeUnits" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Class</span></a>
+                                    </li>
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadConditionCodeUnits" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Condition</span></a>
+                                    </li>
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadClassifications" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Classifications</span></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Administrator.Role.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan" href="#">
+                        <i class="material-icons">supervisor_account</i>
+                        <span class="menu-title" data-i18n="">User Management</span>
+                    </a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            <li>
+                                <a class="collapsible-body" asp-page="/UserAccess/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>User Access List</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/users/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Users</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/roles/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Approvals</span></a>
+                            </li>
+
+                            <li>
+                                <a class="collapsible-body" asp-controller="Permissions" asp-action="ListRoleClaims" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Groups</span></a>
+                            </li>
+                        </ul>
+
+                    </div>
+                </li>
+            }
+
+            <!--ARICS Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">filter_tilt_shift</i><span class="menu-title" data-i18n="">ARICS</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.ConductARICS")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-page="/ARICZ/UploadARICS" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Upload ARICS</span></a>
+                                </li>
+                            }
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.ConductARICS")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-page="/ARICZ/ConductARICS" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Direct Data Entry</span></a>
+                                </li>
+                            }
+                            <li><a asp-page="/aricz/aricshome" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARICS Summary</span></a></li>
+                            <li><a asp-controller="arics" asp-action="aricsapprovalagency" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARICS Approvals</span></a></li>
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End ARICS Menu Group-->
+
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.GIS.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">filter_tilt_shift</i><span class="menu-title" data-i18n="">GIS</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            <li>
+                                <a target="_blank" asp-page="/nrsmap/Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>View GIS Roads</span></a>
+                            </li>
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KENHA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKENHA" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>KenHA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KURA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKURA" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KuRA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KERRA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKERRA" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KeRRA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KWS.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKWS" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KWS GIS</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Counties.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexCounties" data-i18n="" class="collapsible-body"><i class="material-icons"></i><span>Counties GIS</span></a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+            }
+
+            <!--Budgeting Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Finance.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">monetization_on</i><span class="menu-title" data-i18n="">Budgeting</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                            <li>
+                                <a asp-controller="Admin" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Financial Year</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/AllocationCodeUnitRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Allocation Ratios</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/AllocationRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Allocation Figures</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-controller="RevenueCollectionCodeUnitTypes" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection Types</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/RevenueCollectionCodeUnitRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection Code Units</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/RevenueCollectionRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection</span></a>
+                            </li>
+                            <li><a asp-controller="RevenueCollection" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Budget Approvals</span></a></li>
+                            <li><a asp-controller="Disbursement" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Disbursement</span></a></li>
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End Budgeting Menu Group-->
+            <!--Workplanning Menu Group-->
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">monetization_on</i><span class="menu-title" data-i18n="">Work Planning</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        <li>
+                            <a asp-controller="workplan" asp-action="Prioritization" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Prioritization</span></a>
+                        </li>
+                        <li>
+                            <a asp-controller="workplan" asp-action="GetRoadsForWorkPlan" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Work Plan</span></a>
+                        </li>
+                        <li>
+                            <a asp-controller="workplan" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARWP Summary</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <!--End Workplanning Menu Group-->
+
+            <li class="active bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">invert_colors</i><span class="menu-title" data-i18n="">Contract Management</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                                                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Contractor.View")).Succeeded){<li><a class="collapsible-body" asp-controller="Admin" asp-action="Contractors" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contractors</span></a></li>}@if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICSYear.View")).Succeeded){<li><a class="collapsible-body" asp-controller="ARICS" asp-action="ARICSYearIndex" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Calendar Year</span></a></li>}
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="Admin" asp-action="Contractors" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contractors</span></a>
+                            </li>
+                        }
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="RoadWorkPackaging" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Work Packaging</span></a>
+                        </li>
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="ContractDetails" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contract Details</span></a>
+                        </li>
+                        <li>
+                            <a class="active collapsible-body" asp-controller="WorkPlanPackage" asp-action="ProjectProgressDetails" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Project Progress</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Reports" asp-action="index"><i class="material-icons">import_contacts</i><span class="menu-title" data-i18n="">Report Management</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Issue" asp-action="Index"><i class="material-icons">chat</i><span class="menu-title" data-i18n="">Complaints / Issues</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">invert_colors</i><span class="menu-title" data-i18n="">Training</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.QuarterCodeList.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-page="/QuarterCodeListRx/Index" data-i18n=""><i class="material-icons"></i><span>Quarter Code List</span></a>
+                            </li>
+                        }
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.QuarterCodeUnit.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-page="/QuarterCodeUnitRx/Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Quarter Code Unit</span></a>
+                            </li>
+                        }
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.TrainingCourse.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="TrainingCourses"
+                                   asp-action="Index" data-i18n="">
+                                    <i class="material-icons">radio_button_unchecked</i>
+                                    <span>Courses</span>
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a class="collapsible-body" asp-page="/TrainingRx/Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Training</span></a>
+                        </li>
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Training.Report")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="Training" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Training Report</span></a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+            <!--Administration Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Administrator.Role.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">add_to_queue</i><span class="menu-title" data-i18n="">Admin</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ActivityGroup.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="Admin" asp-action="UnitCost" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Activity Code List</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundingSource.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="FundingSources" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Funding Sources</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundType.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="FundTypes" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Fund Types</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Authority.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="Authorities" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Authorities</span></a>
+                                </li>
+                            }
+
+                                                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Contractor.View")).Succeeded){<li><a class="collapsible-body" asp-controller="Admin" asp-action="Contractors" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contractors</span></a></li>}@if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICSYear.View")).Succeeded){<li><a class="collapsible-body" asp-controller="ARICS" asp-action="ARICSYearIndex" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Calendar Year</span></a></li>}
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End Administration Menu Group-->
+        </ul>
+        <div class="navigation-background"></div>
+        <a class="sidenav-trigger btn-sidenav-toggle btn-floating btn-medium waves-effect waves-light hide-on-large-only" href="#" data-target="slide-out"><i class="material-icons">menu</i></a>
+    </aside>
+    <!-- END: SideNav-->
+}
+
+
+<!-- Content Area Starts -->
+<div class="chat-application">
+    <div class="chat-content-head">
+        <div class="header-details">
+            <h5 class="m-0 sidebar-title">Project progress reporting</h5>
+        </div>
+    </div>
+
+    <!-- Scroll - vertical, dynamic height -->
+
+    <div class="row">
+        <div class="col s12 m12 l12">
+            <div class="card">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Packaging of Road Workplans
+                    </h4>
+                    <table id="data-table-packages" class="striped display" role="grid">
+                        <thead>
+                            <tr>
+                                <th>Package Number</th>
+                                <th>Package Name</th>
+                                <th>Engineer's Estimate</th>
+                                <th>% Contigencies</th>
+                                <th>No. Of Workplans</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Contracts != null)
+                            {
+                                foreach (var contract in Model.Contracts)
+                                {
+                                    if (contract.ID == Model.Contract.ID)
+                                    {
+                                        <tr role="row" style="background-color:#c5c2c2">
+                                            <td>
+                                                <a asp-controller="WorkPlanPackage" asp-action="ProjectProgressDetails" asp-route-id="@contract.ID">@contract.WorkPlanPackage.Code</a>
+                                            </td>
+
+                                            <td>@contract.WorkPlanPackage.Name</td>
+                                            <td>KSH @contract.WorkPlanPackage.EngineerEstimate.ToString("N")</td>
+                                            <td>@contract.WorkPlanPackage.Contigencies.ToString("N")</td>
+                                            <td>@(contract.WorkPlanPackage.WorkpackageRoadWorkSectionPlans != null ? contract.WorkPlanPackage.WorkpackageRoadWorkSectionPlans.Count().ToString("N") : "0")</td>
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        <tr role="row">
+                                            <td>
+                                                <a asp-controller="WorkPlanPackage" asp-action="ProjectProgressDetails" asp-route-id="@contract.ID">@contract.WorkPlanPackage.Code</a>
+                                            </td>
+
+                                            <td>@contract.WorkPlanPackage.Name</td>
+                                            <td>KSH @contract.WorkPlanPackage.EngineerEstimate.ToString("N")</td>
+                                            <td>@contract.WorkPlanPackage.Contigencies.ToString("N")</td>
+                                            <td>@(contract.WorkPlanPackage.WorkpackageRoadWorkSectionPlans != null ? contract.WorkPlanPackage.WorkpackageRoadWorkSectionPlans.Count().ToString("N") : "0")</td>
+                                        </tr>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <tr role="row">
+                                    <td colspan="4">
+                                        There are no packages created. Please create packages.
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-content align-right">
+
+                    @if (Model.Contract.WorkPlanPackage != null)
+                    {
+                        <a asp-controller="WorkPlanPackage" asp-action="ContractDetails" asp-route-id="@Model.Contract.ID" class="waves-effect waves-light btn-small"><i class="material-icons left">arrow_back</i> Contract Details</a>
+
+                        <a class="waves-effect waves-light btn-small" asp-controller="WorkPlanPackage" asp-action="ProjectPaymentCertificates" asp-route-id="@Model.Contract.ID"><i class="material-icons left">payment</i> Project Payment Certificates</a>
+
+                    }
+                    <a class="waves-effect waves-light btn-small" asp-controller="WorkPlanPackage" asp-action="FinancialProgressDetails" asp-route-authorityId="@Model.Authority.ID" asp-route-progressEntryId="0" data-i18n=""><i class="material-icons left">payment</i><span>Financial Progress</span></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12">
+            @if (Model.Contract.ID > 0)
+            {
+                <div class="card">
+                    <div class="card-content">
+                        <h4 class="card-title">Annual Work plan road sections</h4>
+                        <table id="data-table-unit-groups" class="striped display">
+                            <thead>
+                                <tr>
+                                    <th>Constituency</th>
+                                    <th>Road Code</th>
+                                    <th>Section Name</th>
+                                    <th>Length</th>
+                                    <th>Planned KM</th>
+                                    <th>Achieved KM</th>
+                                    <th>Work Category</th>
+                                    <th>Funding Source</th>
+                                    <th>Execution Method</th>
+                                    <th>Surface Type</th>
+                                    <th>Workplan Cost</th>
+                                    <th>Original Contract Sum</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Contract.WorkPlanPackage != null)
+                                {
+                                    if (Model.Contract.WorkPlanPackage.WorkpackageRoadWorkSectionPlans != null)
+                                    {
+                                        foreach (var sectionPlan in Model.Contract.WorkPlanPackage.WorkpackageRoadWorkSectionPlans)
+                                        {
+                                            <tr>
+                                                <td>@(sectionPlan.RoadWorkSectionPlan.RoadSection.Constituency != null ? sectionPlan.RoadWorkSectionPlan.RoadSection.Constituency.Name : "") </td>
+                                                <td class="center-align">
+                                                    @sectionPlan.RoadWorkSectionPlan.Road.RoadNumber
+                                                </td>
+                                                <td>@sectionPlan.RoadWorkSectionPlan.RoadSection.SectionName</td>
+                                                <td>@sectionPlan.RoadWorkSectionPlan.RoadSection.Length.ToString("N")</td>
+                                                <td>@sectionPlan.RoadWorkSectionPlan.PlannedLength.ToString("N")</td>
+                                                <td>
+                                                    @sectionPlan.RoadWorkSectionPlan.AchievedLength.ToString("N") &nbsp;
+                                                <a class="tooltipped" data-position="right" data-tooltip="Update Achieved KM" href="#!" onclick="GetPlanUpdate(@sectionPlan.RoadWorkSectionPlan.ID, 'EDIT-ACHIEVED-KM')">
+                                                    <i class="material-icons pink-text">edit</i>
+                                                </a>
+                                            </td>
+                                            <td>@(sectionPlan.RoadWorkSectionPlan.WorkCategory != null? sectionPlan.RoadWorkSectionPlan.WorkCategory.Name : "")</td>
+                                            <td>@(sectionPlan.RoadWorkSectionPlan.FundingSource != null ? sectionPlan.RoadWorkSectionPlan.FundingSource.Name : "")</td>
+                                            <td>@(sectionPlan.RoadWorkSectionPlan.ExecutionMethod != null ? sectionPlan.RoadWorkSectionPlan.ExecutionMethod.Name : "")</td>
+                                            <td>@(sectionPlan.RoadWorkSectionPlan.RoadSection.SurfaceType != null ? sectionPlan.RoadWorkSectionPlan.RoadSection.SurfaceType.Code : "")</td>
+                                            <td>KSH @sectionPlan.RoadWorkSectionPlan.TotalEstimateCost.ToString("N")</td>
+                                            <td>KSH @(sectionPlan.RoadWorkSectionPlan.PlanActivities != null ? sectionPlan.RoadWorkSectionPlan.PlanActivities.Sum(b => b.BillItemAmount).ToString("N") : "0")</td>
+
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="10">
+                                            <span>There are no sections added to the package</span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="10">
+                                        <span>There are no workplans or package defined for the contract</span>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-content">
+
+                        @if (Model.Contract != null)
+                        {
+                            if (Model.Contract.ID > 0)
+                            {
+                                <a class="waves-effect waves-light btn-small" href="#!" onclick="DownloadMonthlyProgressSummary(@Model.Contract.ID)"><i class="material-icons left">file_download</i> Monthly Progress Download</a>
+                                <a class="waves-effect waves-light btn-small" href="#!" onclick="DownloadQuarterlyProgressSummary(@Model.Contract.ID)"><i class="material-icons left">file_download</i> Quarterly Progress Download</a>
+
+                                <a class="waves-effect waves-light btn-small" onclick="DownloadQuarterlyEmploymentSummary(@Model.Contract.ID)"><i class="material-icons left">file_download</i> Employment Summary Download</a>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-content">
+                        <ul class="tabs tabs-fixed-width">
+                            <li class="tab col"><a href="#contractSummary">Employment Details</a></li>
+                            <li class="tab col"><a href="#contractActivitiesProgress">Progress Per Road Activity</a></li>
+                        </ul>
+                        <div id="contractSummary">
+                            <div class="card">
+                                <div class="card-content">
+                                    <h4 class="card-title">Project Summary Information</h4>
+                                    <div class="row">
+                                        <div class="input-field col m6 s12">
+                                            @Html.TextBoxFor(m => m.Contract.WorkPlanPackage.Name, new { @class = "validate", @readonly = "readonly" })
+                                            @Html.LabelFor(m => m.Contract.WorkPlanPackage.Name, new { @class = "active" })
+                                        </div>
+                                        <div class="input-field col m6 s12">
+                                            @Html.TextBoxFor(m => m.Contract.Contractor.Name, new { @class = "validate", @readonly = "readonly" })
+                                            @Html.LabelFor(m => m.Contract.Contractor.Name, new { @class = "active" })
+                                        </div>
+                                        <div class="input-field col m6 s12">
+                                            @Html.TextBoxFor(m => m.Contract.WorkPlanPackage.EngineerEstimate, "KSH {0:n2}", new { @class = "validate", @readonly = "readonly" })
+                                            @Html.LabelFor(m => m.Contract.WorkPlanPackage.EngineerEstimate, new { @class = "active" })
+                                        </div>
+                                        <div class="input-field col m6 s12">
+                                            @Html.TextBoxFor(m => m.Contract.RevisionStatus, new { @class = "validate", @readonly = "readonly" })
+                                            @Html.LabelFor(m => m.Contract.RevisionStatus, new { @class = "active" })
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col m6 s12">
+                                            <p>
+                                                <label>
+                                                    @Html.CheckBoxFor(m => m.Contract.ContractIsSigned, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                                                    <span> Contract Signed  </span>
+                                                </label>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="input-field col m6 s12">
+                                            @Html.TextBoxFor(m => m.Contract.ContractStartDate, new { @class = "validate", @readonly = "readonly" })
+                                            @Html.LabelFor(m => m.Contract.ContractStartDate, new { @class = "active" })
+                                        </div>
+                                        <div class="input-field col m6 s12">
+                                            @Html.TextBoxFor(m => m.Contract.CompletionDate, new { @class = "validate", @readonly = "readonly" })
+                                            @Html.LabelFor(m => m.Contract.CompletionDate, new { @class = "active" })
+                                        </div>
+                                        <div class="input-field col m6 s12">
+                                            @Html.TextBoxFor(m => m.Contract.WorkPlanPackage.AchievedKilometersToDate, "{0:n2}", new { @class = "validate", @readonly = "readonly" })
+                                            @Html.LabelFor(m => m.Contract.WorkPlanPackage.AchievedKilometersToDate, new { @class = "active" })
+                                        </div>
+                                        <div class="input-field col m6 s12">
+                                            @Html.TextBoxFor(m => m.Contract.WorkPlanPackage.VariationAmount, "KSH {0:n2}", new { @class = "validate", @readonly = "readonly" })
+                                            @Html.LabelFor(m => m.Contract.WorkPlanPackage.VariationAmount, new { @class = "active" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="card">
+                                <div class="card-content">
+                                    <h4 class="card-title">Progress Employment</h4>
+
+                                    <div class="row">
+                                        <div class="col s12 p-1">
+                                            <table id="data-table-unit-activities" class="striped display">
+                                                <thead class="table-header">
+                                                    <tr>
+                                                        <th>Quarter</th>
+                                                        <th>No. Of Men</th>
+                                                        <th>No. Of Women</th>
+                                                        <th>Total Employed</th>
+                                                        <th>Men Mandays</th>
+                                                        <th>Women Mandays</th>
+                                                        <th>Total Mandays</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.Contract.EmploymentDetails.Any())
+                                                    {
+
+                                                        foreach (var emp in Model.Contract.EmploymentDetails.OrderBy(i => i.Period))
+                                                        {
+                                                            <tr>
+                                                                <td>QUARTER - @emp.Period</td>
+                                                                <td>@emp.MaleCount</td>
+                                                                <td>@emp.FemaleCount</td>
+                                                                <td>@(emp.MaleCount + emp.FemaleCount)</td>
+                                                                <td>@emp.MaleMandays</td>
+                                                                <td>@emp.FemaleMandays</td>
+                                                                <td>@(emp.MaleMandays + emp.FemaleMandays)</td>
+
+                                                                <td class="center-align">
+                                                                    <span>
+                                                                        <a href="#!" onclick="GetEmploymentDetailForm(@Model.Contract.ID,@emp.ID)"><i class="material-icons pink-text">mode_edit</i></a>&nbsp;
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+
+                                                            <td colspan="8">There employment records to display. <div class="divider"></div></td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="8">
+                                                            @if (Model.Contract.EmploymentDetails.Count() == 4)
+                                                            {
+                                                                <span>The contract has 4 reporting periods updated.</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <a href="#!" onclick="GetEmploymentDetailForm(@Model.Contract.ID,'0')" class="waves-effect waves-light btn right"><i class="material-icons right">gps_fixed</i>Add Employment Detail</a>
+                                                            }
+
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-content">
+                                    <h4 class="card-title">Works reported progress days</h4>
+                                    <div class="row">
+                                        <div class="col m12 s12">
+                                            <table id="data-table-unit-groups" class="striped display col s12">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Progress Date</th>
+                                                        <th>Progress Quantity</th>
+                                                        <th>Entry By</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @if (Model.Contract != null)
+                                                    {
+                                                        if (Model.Contract.WorkPlanPackage != null)
+                                                        {
+                                                            if (Model.Contract.WorkPlanPackage.WorkpackageRoadWorkSectionPlans != null)
+                                                            {
+                                                                foreach (var sectionPlan in Model.Contract.WorkPlanPackage.WorkpackageRoadWorkSectionPlans)
+                                                                {
+                                                                    foreach (var activity in sectionPlan.RoadWorkSectionPlan.PlanActivities)
+                                                                    {
+                                                                        foreach (var progress in activity.PackageProgressEntries.OrderBy(i => i.CreationDate))
+                                                                        {
+                                                                            <tr>
+                                                                                <td>@progress.CreationDate</td>
+                                                                                <td>@progress.Quantity</td>
+                                                                                <td>@progress.CreatedBy</td>
+                                                                            </tr>
+                                                                        }
+
+                                                                    }
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                <tr>
+                                                                    <td colspan="3">
+                                                                        <span>Not work plans to be displayed for the package</span>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <tr>
+                                                                <td colspan="3">
+                                                                    <span>Contract has not been packaged</span>
+                                                                </td>
+                                                            </tr>
+                                                        }
+
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td colspan="3">
+                                                                <span>Contract has not been defined</span>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div id="contractActivitiesProgress">
+                            <div class="row">
+                                <div class="col s12">
+                                    <h4 class="card-title">Details of road activities</h4>
+                                    <hr />
+                                    <table id="data-table-unit-groups" class="striped display col s12">
+                                        <thead>
+                                            <tr>
+                                                <th>Bill No</th>
+                                                <th>Item Code</th>
+                                                <th>Description</th>
+                                                <th>Unit</th>
+                                                <th>Package Quantity</th>
+                                                <th>Bid Rate</th>
+                                                <th>Bill Item Amount</th>
+                                                <th>Previous Qty</th>
+                                                <th>Previous %</th>
+                                                <th>This Qty</th>
+                                                <th>This Qty %</th>
+                                                <th>Done to Date Qty</th>
+                                                <th>Done to Date Qty %</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Model.Contract != null)
+                                            {
+                                                if (Model.Contract.WorkPlanPackage != null)
+                                                {
+                                                    if (Model.Contract.WorkPlanPackage.WorkpackageRoadWorkSectionPlans != null)
+                                                    {
+                                                        foreach (var sectionPlan in Model.Contract.WorkPlanPackage.WorkpackageRoadWorkSectionPlans)
+                                                        {
+                                                            <tr>
+                                                                <td colspan="14" class="center-align">
+                                                                    <span>Activities for : </span> @sectionPlan.RoadWorkSectionPlan.RoadSection.SectionName
+                                                                    <hr />
+                                                                </td>
+                                                            </tr>
+                                                            foreach (var activity in sectionPlan.RoadWorkSectionPlan.PlanActivities)
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        @activity.ItemActivityUnitCost.ItemActivityGroup.BillNumber
+                                                                    </td>
+                                                                    <td>@activity.ItemActivityUnitCost.ItemCode</td>
+                                                                    <td>@activity.ItemActivityUnitCost.Description</td>
+                                                                    <td>@activity.ItemActivityUnitCost.UnitCode</td>
+                                                                    <td>@activity.PackageQuantity</td>
+                                                                    <td>@activity.BidRate</td>
+                                                                    <td>KSH @activity.BillItemAmount.ToString("N")</td>
+                                                                    <td>@activity.PreviousQuantity</td>
+                                                                    <td>
+                                                                        @{
+                                                                            var percentPrevious = Math.Round((double)(activity.PreviousQuantity * 100 / activity.PackageQuantity));
+                                                                            <span>@percentPrevious.ToString("N")</span>
+                                                                        }
+                                                                    </td>
+                                                                    <td>@activity.ThisQuantity</td>
+                                                                    <td>
+                                                                        @{
+                                                                            var percentThis = Math.Round((double)(activity.ThisQuantity * 100 / activity.PackageQuantity));
+                                                                            <span>@percentThis.ToString("N")</span>
+                                                                        }
+                                                                    </td>
+                                                                    <td>@activity.DoneTodateQuantity</td>
+                                                                    <td>
+                                                                        @{
+                                                                            var percentDoneToDate = Math.Round((double)(activity.DoneTodateQuantity * 100 / activity.PackageQuantity));
+                                                                            <span>@percentDoneToDate.ToString("N")</span>
+                                                                        }
+                                                                    </td>
+
+                                                                    <td>
+                                                                        <a class="tooltipped" data-position="right" data-tooltip="Add New Quantity Done" href="#!" onclick="ShowProgressEditForm(@activity.ID, @Model.Contract.WorkPlanPackageId, 0)">
+                                                                            <i class="material-icons pink-text">add</i>
+                                                                        </a> &nbsp;
+                                                                    </td>
+                                                                </tr>
+
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <tr>
+                                                            <td colspan="12">
+                                                                <span>Not work plans to be displayed for the package</span>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+                                                        <td colspan="12">
+                                                            <span>Contract has not been packaged</span>
+                                                        </td>
+                                                    </tr>
+                                                }
+
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="12">
+                                                        <span>Contract has not been defined</span>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="card-content  #e1f5fe light-blue lighten-5">
+                    <p>
+                        Please select contract to view the contract progress information. You can also go back to view  <a asp-controller="WorkPlanPackage" asp-action="RoadWorkPackaging" asp-route-id="0" data-i18n=""> work packages</a> or <a asp-controller="WorkPlanPackage" asp-action="ContractDetails" asp-route-id="0" data-i18n=""><span> Contracts</span></a>
+                    </p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12">
+            <div class="card-footer card-alert white-text  align-right">
+                <div class="card-content">
+                    <div id="modalViewProgressQuantityId" class="modal">
+                        <div class="modal-content grey-text text-darken-1" id="modalViewBodyProgressQuantityDiv">
+
+                        </div>
+                        <div class="modal-footer">
+                            <div class="row">
+                                <div id="btnSubmit" class="col s8 offset-s2">
+                                    <a href="#!" class="modal-close waves-effect waves-light btn-flat">Cancel</a>
+                                    @if (Model.Contract != null)
+                                    {
+                                        if (Model.Contract.ID > 0)
+                                        {
+                                            <a href="#!" class="waves-effect waves-light btn-small" onclick="SavePackageProgress()"><i class="material-icons left">cloud</i>Save This Quantity Done</a>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12">
+            <div class="card-footer card-alert white-text  align-right">
+                <div class="card-content">
+                    <div id="modalViewProgressEmploymentId" class="modal">
+                        <div class="modal-content grey-text text-darken-1" id="modalViewBodyEmploymentDiv">
+
+                        </div>
+                        <div class="modal-footer">
+                            <div class="row">
+                                <div id="btnSubmit" class="col s8 offset-s2">
+                                    <a href="#!" class="modal-close waves-effect waves-light btn-flat">Cancel</a>
+                                    @if (Model.Contract != null)
+                                    {
+                                        if (Model.Contract.ID > 0)
+                                        {
+                                            <a href="#!" class="waves-effect waves-light btn-small" onclick="SavePackageEmploymentDetails()"><i class="material-icons left">cloud</i>Save Employment Details</a>
+                                        }
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer card-alert white-text  align-right">
+                <div class="card-content">
+                    <!-- <a class="waves-effect waves-light btn" href="#!"><i class="material-icons right">gps_fixed</i> Add Record</a>
+                    <a class="waves-effect waves-light btn" href="#!"><i class="material-icons right">gps_fixed</i> View Work Plan Cost</a>
+                    <a class="waves-effect waves-light btn" href="#!"><i class="material-icons right">gps_fixed</i> Approve All</a>-->
+                    <!--My Details View-->
+                    <div id="modalViewPlanEditId" class="modal">
+                        <div class="modal-content grey-text text-darken-1" id="modalViewBodyDivPlanId">
+
+                        </div>
+                        <div class="modal-footer">
+                            <div class="row">
+                                <div id="btnSubmit" class="col s8 offset-s2">
+                                    <a href="#!" class="modal-close waves-effect waves-light btn-flat">Cancel</a>
+                                    <a href="#!" class="waves-effect waves-light btn-small" onclick="SaveSectionWorkplanRecord()"><i class="material-icons left">cloud</i>Update Record</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section vendorJS
+{
+    <script src="~/asset_default/app-assets/vendors/data-tables/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="~/asset_default/app-assets/vendors/data-tables/extensions/responsive/js/dataTables.responsive.min.js" type="text/javascript"></script>
+
+    <script src="~/asset_default/app-assets/vendors/sweetalert/sweetalert.min.js" type="text/javascript"></script>
+
+}
+
+@section scripts
+
+{
+    <script src="~/asset_default/app-assets/js/scripts/app-contacts.js" type="text/javascript"></script>
+    <script src="~/asset_default/app-assets/js/scripts/form-elements.js"></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+
+            $.ajax({
+                method: "POST",
+                url: "/UserManagement/GetShortName",
+                datatype: "json",
+                data: {}
+            })
+                .done(function (data) {
+                    //write json array object
+                    console.log(data);
+                    //Set Road Section ID to null
+
+                    $("#idSpan").text(data.sn);
+                    var Val1 = $("#idHomeAuthority").text();
+                    $("#idHomeAuthority").text(Val1 + "-" + data.authorityCode); $("#idGlobalAuthority").text(data.authorityName);
+                });
+        });
+    </script>
+
+}
+
+<script type="text/javascript">
+
+
+    var GetEmploymentDetailForm = function (contractId, employmentId) {
+        var urlLocation = "/WorkPlanPackage/EditEmploymentDetails?contractId=" + contractId + "&employmentId=" + employmentId;
+        $("#modalViewBodyEmploymentDiv").load(urlLocation, function () {
+            $("#modalViewProgressEmploymentId").modal('open');
+        });
+    }
+
+    var ShowProgressEditForm = function (activityId, workpackageId, editFlag) {
+        var urlLocation = "/WorkPlanPackage/EditProgressQuantity?activityId=" + activityId + "&workpackageId=" + workpackageId + "&editFlag=" + editFlag;
+        $("#modalViewBodyProgressQuantityDiv").load(urlLocation, function () {
+            console.log("wow");
+            $("#modalViewProgressQuantityId").modal('open');
+        });
+    }
+
+    var DownloadMonthlyProgressSummary = function (contractId) {
+
+        $.ajax({
+            cache: false,
+            url: '/WorkPlanPackage/DownloadMonthlyProgressSummary',
+            data: {
+                contractId: contractId
+            },
+            success: function (data) {
+                if (data.success) {
+                    window.location.href = data.href;
+                }
+                else {
+                    swal(data.message, {
+                        title: 'Cancelled',
+                        icon: "error",
+                    });
+                }
+            }
+        });
+    }
+
+    var DownloadQuarterlyProgressSummary = function (contractId) {
+        $.ajax({
+            cache: false,
+            url: '/WorkPlanPackage/DownloadQuarterlyProgressSummary',
+            data: {
+                contractId: contractId
+            },
+            success: function (data) {
+                if (data.success) {
+                    window.location.href = data.href;
+                }
+                else {
+                    swal(data.message, {
+                        title: 'Cancelled',
+                        icon: "error",
+                    });
+                }
+            }
+        });
+    }
+
+    var DownloadQuarterlyEmploymentSummary = function (contractId) {
+        $.ajax({
+            cache: false,
+            url: '/WorkPlanPackage/DownloadQuarterlyEmploymentSummary',
+            data: {
+                contractId: contractId
+            },
+            success: function (data) {
+                if (data.success) {
+                    window.location.href = data.href;
+                }
+                else {
+                    swal(data.message, {
+                        title: 'Cancelled',
+                        icon: "error",
+                    });
+                }
+            }
+        });
+    }
+
+    //submit review the workplan for submission
+    var GetPlanUpdate = function (sectionPlanId, flagNew) {
+        var urlLocation = "/Workplan/GetSectionWorkplanEditView?SectionPlanId=" + sectionPlanId + "&flagNew=" + flagNew;
+        $("#modalViewBodyDivPlanId").load(urlLocation, function () {
+            $("#modalViewPlanEditId").modal('open');
+        });
+    }
+
+    //saving the section work plan
+    var SaveSectionWorkplanRecord = function () {
+        var sendForm = $("#sectionWorkplanForm").serialize();
+
+        $.ajax(
+            {
+                type: "POST",
+                url: "/Workplan/SaveUpdateSectionWorkplan",
+                data: sendForm,
+                success: function (data) {
+                    if (data.success) {
+                        swal({
+                            title: "Success",
+                            text: "Record has been updated successfully!",
+                            timer: 2000,
+                            icon: "success",
+                            buttons: false
+                        }).then(function () {
+                            window.location.reload();
+                        });
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Cancelled',
+                            icon: "error",
+                        });
+                    }
+                }
+            }
+        );
+    }
+
+</script>

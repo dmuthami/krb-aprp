@@ -1,0 +1,43 @@
+﻿@model APRP.Web.ViewModels.ApplicationUserViewModel
+
+<table class="subscription-table responsive-table striped" id="page-length-option">
+    <thead>
+        <tr>
+            <th>
+                User Name
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Agency
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.applicationUsers)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Authority.Name)
+                </td>
+                <td>
+                    @*<a onclick="ShowinPopUp('@Url.Action("RemoveFromGroup","Permissions", new { id = @item.Id },Context.Request.Scheme)','Remove From Group')">
+                        <i class="material-icons pink-text">mode_edit</i>
+                    </a>*@
+
+                    <a onclick="ShowinPopUp('@Url.Action("AddRemoveUserToGroup","Permissions", new { RoleId=Model.ApplicationRole.Id,UserId=item.Id,Add=false },Context.Request.Scheme)','Remove User From Group')">
+                        <i class="material-icons pink-text">delete</i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

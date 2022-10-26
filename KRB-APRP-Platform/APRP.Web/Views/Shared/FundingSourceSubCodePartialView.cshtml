@@ -1,0 +1,70 @@
+﻿@model APRP.Web.ViewModels.FundingSourceViewModel
+
+@{
+    Layout = null;
+}
+
+
+<table id="page-length-option" class="subscription-table responsive-table striped">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.FundingSourceSubCode.Code)</th>
+            <th>@Html.DisplayNameFor(model => model.FundingSourceSubCode.ShortName)</th>
+            <th>@Html.DisplayNameFor(model => model.FundingSourceSubCode.Name)</th>
+   
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.FundingSourceSubCodeList.Any())
+        {
+            @foreach (var activity in Model.FundingSourceSubCodeList.OrderBy(i => i.ID))
+            {
+                <tr>
+                    <td>@activity.Code</td>
+                    <td>@activity.ShortName</td>
+                    <td>@activity.Name</td>
+                   
+                <td class="center-align">
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundingSource.Change")).Succeeded)
+                    {
+                        <a asp-action="FundingSourcesSubCodeEdit" asp-route-id="@activity.ID"><i class="material-icons pink-text">mode_edit</i></a><text>&nbsp;</text>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundingSource.View")).Succeeded)
+                    {
+                        <a asp-action="FundingSourcesSubCodeDetails" asp-route-id="@activity.ID"><i class="material-icons pink-text">play_arrow</i></a><text>&nbsp;</text>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundingSource.Delete")).Succeeded)
+                    {
+                        <a asp-action="FundingSourcesSubCodeDelete" asp-route-id="@activity.ID"><i class="material-icons pink-text">clear</i></a><text>&nbsp;</text>
+                    }
+                </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="9">There are no activity records to display. Please set upload the data</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="row">
+    <div class="col xl12 l12 m12 s12">
+        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundingSource.Add")).Succeeded)
+        {
+            <a asp-action="FundingSourcesSubCodeCreate" asp-route-FundingSourceId="@Model.FundingSourceId"  class="waves-effect waves-light btn">
+                <i class="material-icons right">gps_fixed</i>Add Funding Source Sub Code
+            </a>
+        }
+        <a id="IDBackToList2" class="waves-effect waves-light btn"><i class="material-icons right">gps_fixed</i>Back</a>
+    </div>
+</div>
+<script language="javascript">
+    $('#page-length-option').DataTable({
+        "paging": true
+        //,"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    });
+</script>

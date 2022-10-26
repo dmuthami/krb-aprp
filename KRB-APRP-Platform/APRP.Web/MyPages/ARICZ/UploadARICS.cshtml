@@ -1,0 +1,763 @@
+﻿@page
+@model APRP.Web.MyPages.ARICZ.UploadARICSModel
+@{ ViewData["Title"] = "UploadARICS";
+    Layout = "~/Views/Shared/_Layout_App.cshtml"; }
+
+@section vendorCss
+{
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/extensions/responsive/css/responsive.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/css/select.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/dropify/css/dropify.min.css">
+
+}
+
+@section customCss
+{
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/css/pages/app-chat.css">
+    <link href="~/asset_default/app-assets/vendors/sweetalert/sweetalert.css" type="text/css" rel="stylesheet" />
+    <link href="~/lib/jqueryui/jquery-ui.min.css" rel="stylesheet" />
+}
+
+@section aside
+{
+    <!-- BEGIN: SideNav-->
+    <aside class="sidenav-main nav-expanded nav-lock nav-collapsible sidenav-dark sidenav-active-rounded">
+
+        <div class="brand-sidebar">
+            <h1 class="logo-wrapper">
+                <a class="brand-logo darken-1" asp-controller="Home" asp-action="Dashboard">
+                    <img src="~/asset_default/app-assets/images/logo/menu-logo.png" alt="REPARS logo" /><span class="logo-text hide-on-med-and-down">RePARS</span>
+                </a>
+                <a class="navbar-toggler" href="#"><i class="material-icons">radio_button_checked</i></a>
+            </h1>
+        </div>
+
+        <ul class="sidenav sidenav-collapsible leftside-navigation collapsible sidenav-fixed menu-shadow" id="slide-out" data-menu="menu-navigation" data-collapsible="accordion">
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Home" asp-action="Dashboard"><i class="material-icons">home</i><span id="idHomeAuthority" class="menu-title" data-i18n="">Home</span></a>
+            </li>
+
+
+
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan" href="#">
+                    <i class="material-icons">timeline</i>
+                    <span class="menu-title" data-i18n="">Road Networks</span>
+                </a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        <li>
+                            <a asp-controller="Road" asp-action="Index" data-i18n="" class="collapsible-body">
+                                <i class="material-icons">radio_button_unchecked</i><span>Road Network</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="collapsible-body" asp-controller="RoadClassifications" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Classifications</span></a>
+                        </li>
+
+                    </ul>
+                </div>
+            </li>
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Administrator.Role.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan" href="#">
+                        <i class="material-icons">supervisor_account</i>
+                        <span class="menu-title" data-i18n="">User Management</span>
+                    </a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            <li>
+                                <a class="collapsible-body" asp-page="/UserAccess/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>User Access List</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/users/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Users</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/roles/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Approvals</span></a>
+                            </li>
+
+                            <li>
+                                <a class="collapsible-body" asp-controller="Permissions" asp-action="ListRoleClaims" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Groups</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            }
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.View")).Succeeded)
+            {
+                <li class="active bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">filter_tilt_shift</i><span class="menu-title" data-i18n="">ARICS</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.ConductARICS")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-page="/ARICZ/UploadARICS" class="active collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Upload ARICS</span></a>
+                                </li>
+                            }
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.ConductARICS")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-page="/ARICZ/ConductARICS" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Direct Data Entry</span></a>
+                                </li>
+                            }
+                            <li><a asp-page="/aricz/aricshome" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARICS Summary</span></a></li>
+                            <li><a asp-controller="arics" asp-action="aricsapprovalagency" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARICS Approvals</span></a></li>
+                        </ul>
+                    </div>
+                </li>
+            }
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.GIS.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">filter_tilt_shift</i><span class="menu-title" data-i18n="">GIS</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            <li>
+                                <a target="_blank" asp-page="/nrsmap/Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>View GIS Roads</span></a>
+                            </li>
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KENHA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKENHA" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>KenHA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KURA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKURA" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KuRA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KERRA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKERRA" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KeRRA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KWS.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKWS" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KWS GIS</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Counties.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexCounties" data-i18n="" class="collapsible-body"><i class="material-icons"></i><span>Counties GIS</span></a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+            }
+
+            <!--Budgeting Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Finance.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">monetization_on</i><span class="menu-title" data-i18n="">Budgeting</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                            <li>
+                                <a asp-controller="Admin" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Financial Year</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/AllocationCodeUnitRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Allocation Ratios</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/AllocationRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Allocation Figures</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-controller="RevenueCollectionCodeUnitTypes" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection Types</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/RevenueCollectionCodeUnitRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection Code Units</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/RevenueCollectionRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection</span></a>
+                            </li>
+                            <li><a asp-controller="RevenueCollection" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Budget Approvals</span></a></li>
+                            <li><a asp-controller="Disbursement" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Disbursement</span></a></li>
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End Budgeting Menu Group-->
+            <!--Workplanning Menu Group-->
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">monetization_on</i><span class="menu-title" data-i18n="">Work Planning</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        <li>
+                            <a asp-controller="workplan" asp-action="Prioritization" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Prioritization</span></a>
+                        </li>
+                        <li>
+                            <a asp-controller="workplan" asp-action="GetRoadsForWorkPlan" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Work Plan</span></a>
+                        </li>
+                        <li>
+                            <a asp-controller="workplan" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARWP Summary</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <!--End Workplanning Menu Group-->
+
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">invert_colors</i><span class="menu-title" data-i18n="">Contract Management</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="RoadWorkPackaging" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Work Packaging</span></a>
+                        </li>
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="ContractDetails" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contract Details</span></a>
+                        </li>
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="ProjectProgressDetails" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Project Progress</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Reports" asp-action="index"><i class="material-icons">import_contacts</i><span class="menu-title" data-i18n="">Report Management</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Issue" asp-action="Index"><i class="material-icons">chat</i><span class="menu-title" data-i18n="">Complaints / Issues</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">invert_colors</i><span class="menu-title" data-i18n="">Training</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.QuarterCodeList.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-page="/QuarterCodeListRx/Index" data-i18n=""><i class="material-icons"></i><span>Quarter Code List</span></a>
+                            </li>
+                        }
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.QuarterCodeUnit.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-page="/QuarterCodeUnitRx/Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Quarter Code Unit</span></a>
+                            </li>
+                        }
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.TrainingCourse.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="TrainingCourses"
+                                   asp-action="Index" data-i18n="">
+                                    <i class="material-icons">radio_button_unchecked</i>
+                                    <span>Courses</span>
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a class="collapsible-body" asp-page="/TrainingRx/Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Training</span></a>
+                        </li>
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Training.Report")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="Training" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Training Report</span></a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+            <!--Administration Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Administrator.Role.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">add_to_queue</i><span class="menu-title" data-i18n="">Admin</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ActivityGroup.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="Admin" asp-action="UnitCost" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Activity Code List</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundingSource.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="FundingSources" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Funding Sources</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundType.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="FundTypes" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Fund Types</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Authority.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="Authorities" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Authorities</span></a>
+                                </li>
+                            }
+
+                                                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Contractor.View")).Succeeded){<li><a class="collapsible-body" asp-controller="Admin" asp-action="Contractors" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contractors</span></a></li>}@if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICSYear.View")).Succeeded){<li><a class="collapsible-body" asp-controller="ARICS" asp-action="ARICSYearIndex" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Calendar Year</span></a></li>}
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End Administration Menu Group-->
+        </ul>
+        <div class="navigation-background"></div>
+        <a class="sidenav-trigger btn-sidenav-toggle btn-floating btn-medium waves-effect waves-light hide-on-large-only" href="#" data-target="slide-out"><i class="material-icons">menu</i></a>
+    </aside>
+    <!-- END: SideNav-->
+}
+
+
+<div class="card card-content">
+    <div class="col s12">
+        <blockquote>Uploaded ARICS Files</blockquote>
+    </div>
+</div>
+
+
+<div class="card card-content">
+    <form method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="@Model.MyARICSUpload.Year" />
+        <input type="hidden" asp-for="@Model.MyARICSUpload.RoadSectionId" />
+        @Html.HiddenFor(x => x.Referer)
+        <div class="row">
+            <div class="col s12 m3 l3">
+                <div class="form-group">
+                    <label class="form-label">Road ID</label>
+                    <select id="IdRoad_ID" name="IdRoad_ID" class="browser-default"></select>
+                </div>
+            </div>
+
+
+            <div class="col s12 m3 l3">
+                <div class="form-group">
+                    <label class="form-label">Road Section</label>
+                    <select id="IdRoadSectionID" name="IdRoadSectionID" class="browser-default"></select>
+                </div>
+            </div>
+
+
+            <div class="col s12 m3 l3">
+                <div class="form-group">
+                    <label class="form-label">Calendar Year</label>
+                    <select asp-for="ARICSYear.ID" class="browser-default" asp-items="ViewBag.ARICSYearId"></select>
+                    <span asp-validation-for="ARICSYear.ID" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col s12 m3 l3">
+                <div class="form-group">
+                    <label class="form-label">Surface Type</label>
+                    <input id="IdRoadSectionSurfaceType" class="form-control" readonly />
+                </div>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="row">
+            <div class="col s12 m4 l4">
+                <div class="form-group">
+                    <label class="form-label">Sheet Length(Km)</label>
+                    <select asp-for="RoadSheetLength.ID" class="browser-default" asp-items="ViewBag.RoadSheetLengthId"></select>
+                    <span asp-validation-for="RoadSheetLength.ID" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col s12 m4 l4">
+                <div class="form-group">
+                    <label class="form-label">Interval(M)</label>
+                    <select asp-for="RoadSheetInterval.ID" class="browser-default" asp-items="ViewBag.RoadSheetIntervalId"></select>
+                    <span asp-validation-for="RoadSheetInterval.ID" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col s12 m4 l4">
+                <div class="file-field input-field">
+                    <div class="btn-small">
+                        <label asp-for="FileUpload.UploadPublicSchedule" class="control-label">Browse ARICS File</label>
+                        <span asp-validation-for="FileUpload.UploadPublicSchedule" class="text-danger"></span>
+                        <input type="file">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input asp-for="FileUpload.UploadPublicSchedule" type="file" class="form-control" style="height:auto" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="divider"></div>
+        <div class="row">
+            <div class="card  card-default scrollspy">
+                <button class="btn waves-effect waves-light " 
+                        type="submit" 
+                        name="action" 
+                        asp-page-handler="Upload">
+                    Upload ARICS File
+                    <i class="material-icons right">file_upload</i>
+                </button>
+                <button class="btn waves-effect waves-light grey" 
+                        type="submit" 
+                        name="action"
+                        asp-page-handler="SwitchToDirectDataEntry">
+                    Switch to Direct Data Entry
+                    <i class="material-icons right">swap_horiz</i>
+                </button>
+
+            </div>
+        </div>
+
+    </form>
+
+</div>
+
+<div class="row">
+    <div class="col s12">
+        <div class="card-title">
+            <div class="row">
+                <div class="col s12 m6 l6">
+                    <blockquote>Uploaded ARICS</blockquote>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="container">
+            <div class="section section-data-tables">
+                <div class="col s12 m12 l12">
+                    <div class="card card card-default scrollspy">
+                        <div class="card-content">
+                            <table id="page-length-option" class="display">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.ARICSUpload[0].RoadSection.RoadId)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.ARICSUpload[0].filename)
+                                        </th>
+                                        <th class="text-center">
+                                            @Html.DisplayNameFor(model => model.ARICSUpload[0].Year)
+                                        </th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.ARICSUpload != null)
+                                    {
+                                        foreach (var item in Model.ARICSUpload)
+                                        {
+                                            <tr>
+
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.RoadSection.Road.RoadNumber)
+                                                </td>
+                                                <td>
+                                                    <a asp-controller="ARICS" asp-action="Download"
+                                                       asp-route-folder="ARICS"
+                                                       asp-route-filename="@item.filename">
+                                                        @Html.DisplayFor(modelItem => item.filename)
+                                                    </a>
+                                                </td>
+                                                <td class="text-center">
+                                                    @Html.DisplayFor(modelItem => item.Year)
+                                                </td>
+                                                <td>
+                                                    <button type="button" data-dismiss="modal"
+                                                            data-id="@item.ID"
+                                                            data-filename="@item.filename"
+                                                            class="btn btn-warning btn-sm">
+                                                        Remove
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="dialog-confirm" title="Empty the recycle bin?" style="display:none">
+    <p>
+        <span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;">
+        </span>These items will be permanently deleted and cannot be recovered. Are you sure?
+    </p>
+</div>
+
+
+@section vendorJS
+{
+    <script src="~/asset_default/app-assets/vendors/sweetalert/sweetalert.min.js" type="text/javascript"></script>
+    <script src="~/asset_default/app-assets/vendors/dropify/js/dropify.min.js"></script>
+    <script src="~/lib/jqueryui/jquery-ui.js"></script>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                method: "POST",
+                url: "/UserManagement/GetShortName",
+                datatype: "json",
+                data: {}
+            })
+                .done(function (data) {
+                    //write json array object
+                    console.log(data);
+                    //Set Road Section ID to null
+
+                    $("#idSpan").text(data.sn);
+                    var Val1 = $("#idHomeAuthority").text();
+                    $("#idHomeAuthority").text(Val1 + "-" + data.authorityCode);$("#idGlobalAuthority").text(data.authorityName); 
+                });
+            /*--Global Variables--*/
+            var myArray = {};
+            var mySectionSurfaceTypeArray = {};
+            /*--End of Global Variables--*/
+
+            //Apply datatable styling to table
+            $("#page-length-option").DataTable();
+
+            //Referer URL
+            var url = GetURLReferer();
+            $("#IDBackToList").attr("href", url);
+
+            //Set Defaults
+            myYear = $('#ARICSYear_ID option:selected').val();
+
+            //Set default year
+            $("#MyARICSUpload_Year").val(myYear);
+
+            //Set Default Road Section ID
+            $("#MyARICSUpload_RoadSectionId").val("0");
+
+            //----------Road
+            //populate the roads
+            $.ajax({
+                method: "POST",
+                url: "/ARICS/GetRoads",
+                datatype: "json",
+                data: {}
+            })
+                .done(function (data) {
+                    //write json array object
+                    console.log(data);
+                    var s = '<option value="-1">Please Select a Road</option>';
+                    for (var i = 0; i < data.length; i++) {
+                        s += '<option value="' + data[i].id + '">' + data[i].name + '</option>';
+                    }
+                    $("#IdRoad_ID").html(s);
+                });
+
+            //-------End of Road
+
+            /*
+             * Wire event handler to the road dropdown
+             */
+            var _RoadSectionID = 0;
+            $("#IdRoad_ID").bind("change paste keyup", function () {
+                //get value from input element
+                //var selObj = document.getElementById("IdRoad_ID");
+                //myVal = selObj.selectedIndex;
+
+                myVal = $('#IdRoad_ID option:selected').val();
+
+                //Remove existing road sections
+                $("#IdRoadSectionID > option").remove();
+
+                //Populate with constituencies for the selected county
+                $.ajax({
+                    method: "POST",
+                    url: "/ARICS/GetRoadSectionsForSpecificRoad",
+                    datatype: "json",
+                    data: { SelectedRoadID: myVal }
+                })
+                    .done(function (data) {
+                        //write json array object
+                        console.log(data);
+                        var s = '<option value="-1">Please Select a Road Section</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            s += '<option value="' + data[i].sectionID + '">' + data[i].sectionID + '</option>';
+                            //save road section id from database serial field
+                            myArray[data[i].sectionID] = data[i].id;
+
+                            //save surface type in an array
+                            mySectionSurfaceTypeArray[data[i].sectionID] = data[i].section_surface_type;
+                            //_RoadSectionID = data[i].iD;
+                        }
+                        //console.log("MyArray : " + myArray);
+                        $("#IdRoadSectionID").html(s);
+                    });
+            });
+
+            /*
+             * Wire event handler for the road section
+             * Events are change, paste or keyup events
+             *
+             * Load Road Section ID
+             */
+            //
+            $("#IdRoadSectionID").bind("change paste keyup", function () {
+                //get value from input element
+                var selObj = document.getElementById("IdRoadSectionID");
+                myVal = selObj.selectedIndex;
+
+                myVal = $('#IdRoadSectionID option:selected').val();
+
+                //Set Road Section ID to null
+                $("#MyARICSUpload_RoadSectionId").val();
+
+                //GetReal Section ID from database
+                var roadSectID = myArray[myVal];
+
+                //Get Surface Type for Road Section
+                var roadSectionSurfaceType = mySectionSurfaceTypeArray[myVal];
+
+                //Set Road Section Surface Type
+                $("#IdRoadSectionSurfaceType").val(roadSectionSurfaceType);
+
+                //Set Road Section ID to selected value
+                $("#MyARICSUpload_RoadSectionId").val(roadSectID);
+
+            });
+
+            //Dialog box and delete
+            $('#page-length-option').on('click', 'button.btn', function () {
+                var id = $(this).data("id");
+                var filename = $(this).data("filename");
+
+                //$('#successModal').modal('show');
+                $("#dialog-confirm").dialog({
+                    resizable: false,
+                    height: "auto",
+                    width: 400,
+                    modal: true,
+                    buttons: {
+                        "Delete all items": function () {
+                            $(this).dialog("close");
+                            //Call ajax function to delete the record and file
+                            $.ajax({
+                                method: "POST",
+                                url: "/ARICS/DeleteARICSAttachment",
+                                datatype: "json",
+                                data: { id: id, filename: filename }
+                            })
+                                .done(function (data) {
+                                    console.log("DeleteARICSAttachment: " + data);
+                                    //var obj = data;
+                                    //console.log("id:" + obj.id);
+                                    //console.log("filename:" + obj.filename);
+                                    //Call function to populate the data table
+                                    DisplayARICSUploads();
+                                });
+                        },
+                        Cancel: function () {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+
+
+            });
+
+            //Change year function
+            $("#ARICSYear_ID").bind("change paste keyup", function () {
+
+                myYear = $('#ARICSYear_ID option:selected').val();
+
+                //Set Current Year
+                $("#MyARICSUpload_Year").val(myYear);
+
+            });
+        });
+
+        function DisplayARICSUploads() {
+            // clear the table before populating it with more data
+            ClearTable();
+
+            //Hit controller to create respective roadsheets for the selected road section
+            $.ajax({
+                method: "POST",
+                url: "/ARICS/GetARICSUploads",
+                datatype: "json",
+                data: {}
+            })
+                .done(function (data) {
+                    //console.log(data);
+                    if (data !== null) {
+                        populateDataTable(data);
+                    }
+                });
+        };
+
+        function populateDataTable(data) {
+            console.log("Populating data table...");
+            var length = Object.keys(data).length;
+            for (var i = 0; i < length + 1; i++) {
+                var arics = data[i];
+
+                // You could also use an ajax property on the data table initialization
+                $('#page-length-option').dataTable().fnAddData([
+                    arics.road_Section_ID,
+                    '<a href="' + GetURL(arics) + '"' + '">' + arics.filename + '</a>',
+                    arics.year,
+                    '<button type="button" data-dismiss="modal"' +
+                    'data-id="' + arics.id + '"' +
+                    'data-filename="' + arics.filename + '"' +
+                    'class="btn btn-warning btn-sm">' + 'Remove' + '</button>'
+                ]);
+            }
+        }
+
+        function ClearTable() {
+            $("#page-length-option").find("tr:gt(0)").remove();
+            // clear the table before populating it with more data
+            $("#page-length-option").DataTable().clear();
+        }
+
+        function GetURL(arics) {
+            //Referer URL
+            var referer = $("#Referer").val();
+            //console.log($("#Referer").val());
+            var res = referer.split("/");
+            //console.log(res)
+            //console.log(res[0]);
+            var url = res[0] + "//" + res[2] + "/arics/download?folder=ARICS&filename=" + arics.filename;
+            return url;
+        }
+
+        function GetURLReferer() {
+            //Referer URL
+            var referer = $("#Referer").val();
+            return referer;
+        }
+
+    </script>
+}
+
+

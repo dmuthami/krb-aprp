@@ -1,0 +1,133 @@
+﻿@model APRP.Web.Domain.Models.PlanActivity
+
+
+@{
+
+    <h5>Set values for activity : @Model.ItemActivityUnitCost.Description</h5>
+
+
+}
+
+<form id="ActivityWorkplanForm">
+    @Html.HiddenFor(m => m.ID)
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.ItemActivityUnitCost.UnitDescription, new { @readonly= "readonly", @class = "active" })
+            @Html.LabelFor(m => m.ItemActivityUnitCost.UnitDescription, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.ItemActivityUnitCost.UnitMeasure, new { @readonly= "readonly", @class = "active" })
+            @Html.LabelFor(m => m.ItemActivityUnitCost.UnitMeasure, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.StartChainage, new { @class = "validate active" })
+            @Html.LabelFor(m => m.StartChainage, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.EndChainage, new { @class = "validate active" })
+            @Html.LabelFor(m => m.EndChainage, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.Quantity, new { @class = "validate active" })
+            @Html.LabelFor(m => m.Quantity, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.Rate, new { @class = "validate active" })
+            @Html.LabelFor(m => m.Rate, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.Amount, new { @readonly= "readonly", @class = "active" })
+            @Html.LabelFor(m => m.Amount, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s8 offset-s2">
+            <div class="row">
+                <div class="input-field col s6">
+                    @Html.DropDownListFor(m => m.TechnologyId, ViewBag.TechnologyList as SelectList, "Please choose")
+                </div>
+                <div class="input-field col s6">
+                    @Html.TextBoxFor(m => m.LabourPercent, new { @class = "active" })
+                    @Html.LabelFor(m => m.LabourPercent, new { @class = "active" })
+                </div>
+            </div>
+            
+
+        </div>
+    </div>
+
+</form>
+
+<script type="text/javascript">
+
+    //submit the form saving : UpdatePlanActivity
+
+    var UpdatePlanActivity = function () {
+        var sendForm = $("#ActivityWorkplanForm").serialize();
+
+        $.ajax(
+            {
+                type: "POST",
+                url: "/Workplan/UpdatePlanActivity",
+                data: sendForm,
+                success: function (data) {
+                    if (data.success) {
+                        //$("#modalViewPlanId").modal('close');
+                        swal({
+                            title: "Success",
+                            text: "Item Activity updated successfully!",
+                            timer: 1700,
+                            icon: "success",
+                            buttons: false
+                        }).then(function () {
+                            window.location.href = data.href;
+                        });
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Error Occured',
+                            icon: "error",
+                        });
+                    }
+                }
+
+            }
+        );
+    }
+
+    $(document).ready(function () {
+        $('select').formSelect();
+
+        $("#Rate").keyup(function () { // run anytime the value changes
+            var firstValue = parseFloat($('#Rate').val()); // get value of field
+            var secondValue = parseFloat($('#Quantity').val()); // convert it to a float
+           // var thirdValue = parseFloat($('#third').val());
+           /// var fourthValue = parseFloat($('#fourth').val());
+            $("#Amount").val(firstValue * secondValue);
+            // add them and output it
+        });
+
+         $("#Quantity").keyup(function () { 
+            var rate = parseFloat($('#Rate').val()); 
+            var qty = parseFloat($('#Quantity').val()); 
+            $("#Amount").val(rate * qty);
+           
+        });
+
+
+    });
+
+
+</script>

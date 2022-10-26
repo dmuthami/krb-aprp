@@ -1,0 +1,136 @@
+﻿@model APRP.Web.MyPages.ARICSheetz.DetailsModel
+
+
+
+<div class="section">
+    <div class="row">
+        <div id="breadcrumbs-wrapper" data-image="//asset_default/app-assets/images/gallery/breadcrumb-bg.jpg">
+            <!-- Search for small screen-->
+            <div class="container">
+                <div class="row">
+                    <div class="col s12 m6 l6">
+                        <h5 class="breadcrumbs-title mt-0 mb-0">Road Section Details</h5>
+                    </div>
+                    <div class="col s12 m6 l6 right-align-md">
+                        <ol class="breadcrumbs mb-0">
+                            <li class="breadcrumb-item">
+                                <a asp-page="/index">Home</a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                <a asp-page="/Roadsectionz/index">Road Section</a>
+                            </li>
+                            <li class="breadcrumb-item active">
+                                Details
+                            </li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col s12">
+            <div class="container">
+                <div class="section">
+                    <!-- Responsive Table -->
+                    <div class="row">
+                        <div class="col s12 m12 l12">
+                            <div id="responsive-table" class="card card card-default scrollspy">
+                                <div class="col s12">
+                                </div>
+                                <div class="col s12">
+                                    <form>
+                                        @Html.HiddenFor(x => x.Referer)
+                                    </form>
+                                    <dl class="row">
+                                        <dt class="col-sm-2">
+                                            @Html.DisplayNameFor(model => model.ARICS.Chainage)
+                                        </dt>
+                                        <dd class="col-sm-10">
+                                            @Html.DisplayFor(model => model.ARICS.Chainage)
+                                        </dd>
+                                        <dt class="col-sm-2">
+                                            @Html.DisplayNameFor(model => model.ARICS.SurfaceTypeUnPaved.Name)
+                                        </dt>
+                                        <dd class="col-sm-10">
+                                            @Html.DisplayFor(model => model.ARICS.SurfaceTypeUnPaved.Name)
+                                        </dd>
+                                        <dt class="col-sm-2">
+                                            @Html.DisplayNameFor(model => model.ARICS.RateOfDeterioration)
+                                        </dt>
+                                        <dd class="col-sm-10">
+                                            @Html.DisplayFor(model => model.ARICS.RateOfDeterioration)
+                                        </dd>
+                                        <dt class="col-sm-2">
+                                            @Html.DisplayNameFor(model => model.ARICS.GravelRequired.Description)
+                                        </dt>
+                                        <dd class="col-sm-10">
+                                            @Html.DisplayFor(model => model.ARICS.GravelRequired.Description)
+                                        </dd>
+                                        <dt class="col-sm-2">
+                                            @Html.DisplayNameFor(model => model.ARICS.SpotImprovementRemarks)
+                                        </dt>
+                                        <dd class="col-sm-10">
+                                            @Html.DisplayFor(model => model.ARICS.SpotImprovementRemarks)
+                                        </dd>
+                                        <dt class="col-sm-2">
+                                            @Html.DisplayNameFor(model => model.ARICS.CulvertN)
+                                        </dt>
+                                        <dd class="col-sm-10">
+                                            @Html.DisplayFor(model => model.ARICS.CulvertN)
+                                        </dd>
+                                        <dt class="col-sm-2">
+                                            @Html.DisplayNameFor(model => model.ARICS.CulvertRR)
+                                        </dt>
+                                        <dd class="col-sm-10">
+                                            @Html.DisplayFor(model => model.ARICS.CulvertRR)
+                                        </dd>
+                                        <dt class="col-sm-2">
+                                            @Html.DisplayNameFor(model => model.ARICS.CulvertHR)
+                                        </dt>
+                                        <dd class="col-sm-10">
+                                            @Html.DisplayFor(model => model.ARICS.CulvertHR)
+                                        </dd>
+                                        <dt class="col-sm-2">
+                                            @Html.DisplayNameFor(model => model.ARICS.CulvertNH)
+                                        </dt>
+                                        <dd class="col-sm-10">
+                                            @Html.DisplayFor(model => model.ARICS.CulvertNH)
+                                        </dd>
+                                        <dt class="col-sm-2">
+                                            @Html.DisplayNameFor(model => model.ARICS.CulvertG)
+                                        </dt>
+                                        <dd class="col-sm-10">
+                                            @Html.DisplayFor(model => model.ARICS.CulvertG)
+                                        </dd>
+                                        <dt class="col-sm-2">
+                                            @Html.DisplayNameFor(model => model.ARICS.CulvertB)
+                                        </dt>
+                                        <dd class="col-sm-10">
+                                            @Html.DisplayFor(model => model.ARICS.CulvertB)
+                                        </dd>
+                                        <dt class="col-sm-2">
+                                            @Html.DisplayNameFor(model => model.ARICS.OtherStructureRemarks)
+                                        </dt>
+                                        <dd class="col-sm-10">
+                                            @Html.DisplayFor(model => model.ARICS.OtherStructureRemarks)
+                                        </dd>
+                                    </dl>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col s12">
+                        <a asp-page="./Edit" asp-route-id="@Model.ARICS.ID">Edit</a> |
+                        <a id="IDBackToList">Back to List</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+

@@ -1,0 +1,109 @@
+﻿@model APRP.Web.ViewModels.COSTES.COSTESTViewModel
+
+<table class="subscription-table responsive-table striped" id="page-length-option">
+    <thead>
+        <tr>
+            <th>
+                Code
+            </th>
+            <th>
+                ItemCode
+            </th>
+            <th>
+                SubItemCode
+            </th>
+            <th>
+                SubSubItemCode
+            </th>
+            <th>
+                Unit
+            </th>
+            <th>
+                UnitDescription
+            </th>
+            <th>
+                UnitPrice
+            </th>
+            <th>
+                WorkItem
+            </th>
+            <th>
+                SubItem
+            </th>
+            <th>
+                OtherDescription
+            </th>
+            <th>
+                SurveyYear
+            </th>
+            <th>
+                OverHeadRoutineMaintanance
+            </th>
+            @*<th>Action</th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.GetInstructutedWorkItemsViewModel != null)
+        {
+            foreach (var item in Model.GetInstructutedWorkItemsViewModel)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Code)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ItemCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SubItemCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SubSubItemCode)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Unit)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UnitDescription)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UnitPrice)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.WorkItem)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SubItem)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OtherDescription)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.SurveyYear)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.OverHeadRoutineMaintanance)
+                    </td>
+                    @*<td>
+
+                        <a asp-action="Edit" asp-route-id="@item.Code" class="waves-effect waves-light btn-small">
+                            <i class="material-icons left">edit</i>Edit
+                        </a>
+
+
+
+                        <a asp-action="Details" asp-route-id="@item.Code" class="waves-effect waves-light btn-small">
+                            <i class="material-icons left">details</i>Details
+                        </a>
+
+
+                        <a asp-action="Delete" asp-route-id="@item.Code" class="waves-effect waves-light btn-small">
+                            <i class="material-icons left">delete_forever</i>Delete
+                        </a>
+
+                    </td>*@
+                </tr>
+            }
+        }
+    </tbody>
+</table>

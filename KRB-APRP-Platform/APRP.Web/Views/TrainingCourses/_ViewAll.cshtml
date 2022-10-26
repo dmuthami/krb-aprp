@@ -1,0 +1,73 @@
+﻿@model IEnumerable<APRP.Web.Domain.Models.TrainingCourse>
+
+<table class="subscription-table responsive-table striped" id="page-length-option">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Course)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdateBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdateDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Course)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreationDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdateBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdateDate)
+                </td>
+                <td>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.TrainingCourse.Change")).Succeeded
+                       || (await AuthorizationService.AuthorizeAsync(User, "Permissions.TrainingCourse.Add")).Succeeded)
+                    {
+                        <a onclick="ShowinPopUp('@Url.Action("AddEditTrainingCourse","TrainingCourses", new { id = @item.ID },Context.Request.Scheme)','Edit')">
+                            <i class="material-icons pink-text">mode_edit</i>
+                        </a>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.TrainingCourse.View")).Succeeded)
+                    {
+                        <a onclick="ShowinPopUp('@Url.Action("Details","TrainingCourses", new { id = @item.ID },Context.Request.Scheme)','Details')">
+                            <i class="material-icons pink-text">details</i>
+                        </a>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.TrainingCourse.Delete")).Succeeded)
+                    {
+                        <a onclick="ShowinPopUp('@Url.Action("Delete","TrainingCourses", new { id = @item.ID },Context.Request.Scheme)','Delete')">
+                            <i class="material-icons pink-text">delete</i>
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,0 +1,141 @@
+﻿@model APRP.Web.Domain.Models.Contract
+
+    <div class="row card">
+        <div  class="col s12 card-content #f5f5f5 grey lighten-4 p-2">
+            <form id="contractDetailsFormEdit">
+                @Html.HiddenFor(m => m.ID)
+                <div class="row">
+                    <div class="input-field col m6 s12">
+                        @Html.TextBoxFor(m => m.ContractSumWorkplan, "KSH {0:n2}", new { @class = "validate", @readonly = "readonly" })
+                        @Html.LabelFor(m => m.ContractSumWorkplan, new { @class = "active" })
+                    </div>
+                    <div class="input-field col m6 s12">
+                        @Html.TextBoxFor(m => m.ContractSumPackage, "KSH {0:n2}", new { @class = "validate", @readonly = "readonly" })
+                        @Html.LabelFor(m => m.ContractSumPackage, new { @class = "active" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col m6 s12">
+                        @Html.TextBoxFor(m => m.PerformanceBond, new { @class = "validate" })
+                        @Html.LabelFor(m => m.PerformanceBond, new { @class = "active" })
+                    </div>
+
+                    <div class="input-field col m6 s12">
+                        @Html.TextBoxFor(m => m.PercentageRetention, new { @class = "validate" })
+                        @Html.LabelFor(m => m.PercentageRetention, new { @class = "active" })
+                    </div>
+                    <div class="input-field col m6 s12">
+                        @Html.TextBoxFor(m => m.AdvancePayment, "{0:n2}", new { @class = "validate" })
+                        @Html.LabelFor(m => m.AdvancePayment, new { @class = "active" })
+                    </div>
+                    <div class="input-field col m6 s12">
+                        @Html.TextBoxFor(m => m.AdvanceClearance, "{0:n2}", new { @class = "validate" })
+                        @Html.LabelFor(m => m.AdvanceClearance, new { @class = "active" })
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="input-field col m6 s12">
+                        <p>
+                            <label>
+                                @Html.CheckBoxFor(m => m.inPaymentCertificate, new { htmlAttributes = new { @class = "form-control" } })
+                                <span>In Payment Certificate</span>
+                            </label>
+                        </p>
+
+                    </div>
+                    <div class="input-field col m6 s12">
+                        <p>
+                            <label>
+                                @Html.CheckBoxFor(m => m.ContractTaxable, new { htmlAttributes = new { @class = "form-control" } })
+                                <span> Contract Not Taxable  </span>
+                            </label>
+                        </p>
+                    </div>
+                    <div class="input-field col m6 s12">
+                        <p>
+                            <label>
+                                @Html.CheckBoxFor(m => m.ContractIsSigned, new { htmlAttributes = new { @class = "form-control" } })
+                                <span> Contract Signed  </span>
+                            </label>
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col m6 s12">
+                        @Html.TextBoxFor(m => m.ContractStartDate, "{0:yyyy-MM-dd}", new { @class = "datepicker" })
+                        @Html.LabelFor(m => m.ContractStartDate, new { @class = "active" })
+                    </div>
+                    <div class="input-field col m6 s12">
+                        @Html.TextBoxFor(m => m.ContractEndDate, "{0:yyyy-MM-dd}", new { @class = "datepicker" })
+                        @Html.LabelFor(m => m.ContractEndDate, new { @class = "active" })
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div id="btnSubmit" class="col s12 align-right">
+                        <a href="#!" class="waves-effect waves-light btn " onclick="CancelSaveContractDetails()">Cancel Edit</a> &nbsp;&nbsp;
+                        <a href="#!" class="waves-effect waves-light btn" onclick="SaveContractDetails()">Save Contract Details</a>
+                    </div>
+                </div>
+                <br />
+            </form>
+        </div>
+    </div>
+
+<script type="text/javascript">
+
+    //submit the form saving : Update the work package
+    var SaveContractDetails = function () {
+        var sendForm = $("#contractDetailsFormEdit").serialize();
+        $.ajax(
+            {
+                type: "POST",
+                url: "/WorkPlanPackage/EditPackageContractDetails",
+                data: sendForm,
+                success: function (data) {
+                    if (data.success) {
+                        swal({
+                            title: "Success",
+                            text: "Contract information updated successfully!",
+                            timer: 1500,
+                            icon: "success",
+                            buttons: false
+                        }).then(function () {
+                            window.location.href = data.href;
+                        });
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Error Occured',
+                            icon: "error",
+                        });
+                    }
+                }
+
+            }
+        );
+    }
+
+    var CancelSaveContractDetails = function () {
+        location.reload(false);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.datepicker');
+        var instances = M.Datepicker.init(elems, { container: 'body' });
+       // var instances = M.Datepicker.init(elems, { });
+        var elems = document.querySelectorAll('.modal');
+        var instances = M.Modal.init(elems);
+    });
+
+    
+    $(document).ready(function () {
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd'
+        });
+    });
+
+
+
+</script>

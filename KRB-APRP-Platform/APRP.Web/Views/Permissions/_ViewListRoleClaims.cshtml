@@ -1,0 +1,38 @@
+﻿@model IEnumerable<APRP.Web.Domain.Models.ApplicationRole>
+
+<table class="subscription-table responsive-table striped" id="page-length-option">
+    <thead>
+        <tr>
+            <th>
+                Group Name
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    <a onclick="ShowinPopUp('@Url.Action("AddEditRoleClaim","Permissions", new { id = @item.Id },Context.Request.Scheme)','Add/Edit Group')">
+                        <i class="material-icons pink-text">mode_edit</i>
+                    </a>
+
+                    <a asp-action="RoleClaimDetails" asp-route-id="@item.Id">
+                        <i class="material-icons pink-text">details</i>
+                    </a>
+
+                    <a onclick="ShowinPopUp('@Url.Action("RoleClaimDelete","Permissions", new { id = @item.Id },Context.Request.Scheme)','Delete Group')">
+                        <i class="material-icons pink-text">delete</i>
+                    </a>                    
+                    <a asp-controller="Permissions" asp-action="ListGroupUsers" asp-route-id="@item.Id">
+                        <i class="material-icons pink-text">group_add</i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

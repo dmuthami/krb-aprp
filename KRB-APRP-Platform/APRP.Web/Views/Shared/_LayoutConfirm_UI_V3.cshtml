@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>APRP System</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="~/ui_v3/css/vendors/mdi/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="~/ui_v3/css/vendors/base/vendor.bundle.base.css">
+    <!-- endinject -->
+    <!-- plugin css for this page -->
+    <link rel="stylesheet" href="~/ui_v3/css/vendors/datatables.net-bs4/dataTables.bootstrap4.css">
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="~/ui_v3/css/style.css">
+    <link rel="stylesheet" href="~/ui_v3/css/design.css">
+
+    <!-- endinject -->
+    <link rel="shortcut icon" href="~/ui_v3/images/log.png" />
+
+    @RenderSection("CSS", required: false)
+
+</head>
+<body>
+    <div class="container-scroller">
+        <div class="container-fluid page-body-wrapper full-page-wrapper">
+            <div class="content-wrapper d-flex align-items-center auth px-0">
+                <div class="row w-100 mx-0">
+                    <div class="col-lg-4 mx-auto prompt__logo--bar">
+                        <div class="auth-form-light text-center py-5 px-4 px-sm-5">
+                            <div class="brand-logo">
+                                <img src="~/ui_v3/images/log.png" alt="logo">
+                            </div>
+                            @RenderBody()
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- content-wrapper ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="~/ui_v3/css/vendors/base/vendor.bundle.base.js"></script>
+    <!-- endinject -->
+    <!-- inject:js -->
+    <script src="~/ui_v3/js/off-canvas.js"></script>
+    <script src="~/ui_v3/js/hoverable-collapse.js"></script>
+    <script src="~/ui_v3/js/template.js"></script>
+    <!-- endinject -->
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

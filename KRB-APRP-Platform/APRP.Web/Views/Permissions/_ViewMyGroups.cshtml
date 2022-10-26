@@ -1,0 +1,35 @@
+﻿@model APRP.Web.ViewModels.ApplicationUserViewModel
+
+<table class="display" id="page-length-option">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.MyGroups)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    <a onclick="ShowinPopUp('@Url.Action("AddRemoveUserToGroup","Permissions", 
+                                            new { RoleId=item.Id,UserId=Model.ApplicationUser.Id,Add=false },
+                                            Context.Request.Scheme)','Remove User From Group')">
+                        <i class="material-icons pink-text">delete</i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

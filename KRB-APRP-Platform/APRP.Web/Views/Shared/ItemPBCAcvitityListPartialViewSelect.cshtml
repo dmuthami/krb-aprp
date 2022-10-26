@@ -1,0 +1,91 @@
+﻿@model IEnumerable<APRP.Web.Domain.Models.ItemActivityPBC>
+
+<div class="section card-content">
+    <h5 class="card-title">Please select item activities for planning</h5>
+    <div id="button-trigger" class="card card card-default scrollspy border-radius-6 fixed-width">
+        <div class="card-content p-4">
+            <table id="data-table-unit-pbc-activities-select" class="striped display" style="width:100%">
+                <thead class="tbl-header">
+                    <tr>
+                        <th>PBC Item Description</th>
+                        <th>Activity Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var activity in Model.OrderBy(i => i.Technology.Code))
+                        {
+
+                            <tr>
+                                <td>@activity.Description</td>
+                                <td>@activity.Technology.Description</td>
+                                <td class="center-align">
+                                    <label>
+                                        <input type="checkbox" value="@activity.ID" />
+                                        <span></span>
+                                    </label>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3">There are no activity records to display. Please set upload the data</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+
+
+    var GetSelectedValues = function (sectionPlanId) {
+        var $chkboxes = $("#data-table-unit-pbc-activities-select").find("tr input[type='checkbox']:checked");
+        //data-table-unit-activities
+        var checkBoxVals = $chkboxes.map(function () {
+            return $(this).val();
+        }).toArray();
+
+        SubmitSelectedActivities(sectionPlanId, checkBoxVals);
+
+    }
+
+    var SubmitSelectedActivities = function (sectionPlanId, seletectedIds) {
+        // let keys = Array.from( seletectedIds.keys() );
+        $.ajax(
+            {
+                type: "POST",
+                url: "/Workplan/UpdateSelectedItemActivitiesPBC",
+                data: {
+                    seletectedIds: seletectedIds,
+                    sectionPlanId: sectionPlanId
+                },
+                success: function (data) {
+                    if (data.success) {
+                        swal({
+                            title: "Success",
+                            text: "PBC Item Activities added successfully to the workplan!",
+                            timer: 2000,
+                            icon: "success",
+                            buttons: false
+                        }).then(function () {
+                            window.location.href = data.href;
+                        });
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Cancelled',
+                            icon: "error",
+                        });
+                    }
+                }
+            });
+    }
+</script>

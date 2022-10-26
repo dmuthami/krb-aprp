@@ -1,0 +1,95 @@
+﻿@model APRP.Web.ViewModels.ReleaseViewModel
+
+@{
+    Layout = null;
+}
+
+
+<table class="subscription-table responsive-table striped" id="page-length-option">
+    <thead>
+        <tr>
+            <th>
+                Date
+            </th>
+            <th>
+                CHQ.NO.
+            </th>
+            <th>
+                DETAILS/PAYEE
+            </th>
+            <th>
+                Amount
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Releases.Any())
+        {
+            foreach (var item in Model.Releases)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ReleaseDate)
+                    </td>
+                    <td>
+                        @{
+                            var ChequeNo = item.ChequeNo;
+                            @ChequeNo
+                        }
+                    </td>
+                    <td>
+                        @{
+                            var DetailsOrPayee = item.DetailsOrPayee;
+                            @DetailsOrPayee
+                        }
+                    </td>
+                    <td>
+                        @{
+                            var ReleaseAmount = item.ReleaseAmount;
+                            @String.Format("{0:0,0.00}", ReleaseAmount)
+                        }
+                    </td>
+                    <td>
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Release.Change")).Succeeded)
+                        {
+                            <a asp-controller="Releases" asp-action="ReleaseAddEdit" asp-route-id="@item.ID"
+                               asp-route-FinancialYearId="@Model.FinancialYearId">
+                                <i class="material-icons pink-text">mode_edit</i>
+                            </a>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Release.Delete")).Succeeded)
+                        {
+                            <a onclick="ShowinPopUp('@Url.Action("Delete","Releases", new { ID = @item.ID },Context.Request.Scheme)','Delete')">
+                                <i class="material-icons pink-text">delete</i>
+                            </a>
+
+                            @*<a class="waves-effect waves-light btn-small"
+                                   onclick="ShowinPopUp('@Url.Action("Delete","Releases", new { ID = @item.ID },Context.Request.Scheme)','Delete')">
+                                    <i class="material-icons left">delete</i>
+                                </a>*@
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@*<div class="row">
+        <div class="col xl12 l12 m12 s12">
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ActivityItem.Add")).Succeeded)
+            {
+                <a asp-action="ActivityListCreate" asp-route-ItemActivityGroupId="2" class="waves-effect waves-light btn">
+                    <i class="material-icons right">gps_fixed</i>Add Activity Item
+                </a>
+            }
+            <a id="IDBackToList2" class="waves-effect waves-light btn"><i class="material-icons right">gps_fixed</i>Back</a>
+        </div>
+    </div>*@
+<script language="javascript">
+    $('#page-length-option').DataTable({
+        "paging": true
+        //,"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    });
+</script>

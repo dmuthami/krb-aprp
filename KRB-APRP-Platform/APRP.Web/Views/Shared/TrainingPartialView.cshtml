@@ -1,0 +1,79 @@
+﻿@model APRP.Web.ViewModels.TrainingViewModel;
+
+@{
+    Layout = null;
+}
+
+
+<div class="card">
+    <div class="card-content">
+        <h4 class="card-title">
+            Training Entries
+        </h4>
+        <div class="row">
+            <div class="col s12">
+                <table id="page-length-option" class="display">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => @Model.Training.TrainingCourse.Course)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => @Model.Training.CadreOfTrainees)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => @Model.Training.NoTrained)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => @Model.Training.QuarterCodeUnit.QuarterCodeList.Name)
+                            </th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in @Model.Trainings)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.TrainingCourse.Course)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CadreOfTrainees)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.NoTrained)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.QuarterCodeUnit.QuarterCodeList.Name)
+                                </td>
+                                <td>
+                                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Training.Change")).Succeeded)
+                                    {
+                                        <a class="btn btn-small" asp-page="/TrainingRx/Edit" asp-route-id="@item.ID">Edit</a>
+                                    }
+
+                                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Training.View")).Succeeded)
+                                    {
+                                        <a class="btn btn-small" asp-page="/TrainingRx/Details" asp-route-id="@item.ID">Details</a>
+                                    }
+
+                                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Training.Delete")).Succeeded)
+                                    {
+                                        <a class="btn btn-small" asp-page="/TrainingRx/Delete" asp-route-id="@item.ID">Delete</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script language="javascript">
+    $('#page-length-option').DataTable({
+        "paging": true
+        //,"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    });
+</script>

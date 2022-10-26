@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewData["Title"] = "Logout";
+    Layout = "~/Views/Shared/_LayoutHome_ui_v1.cshtml";
+}
+
+    <div class="col s12">
+        <div class="container">
+            <div id="login-page" class="row">
+                <div class="col s12 m6 l4 z-depth-4 card-panel border-radius-6 login-card bg-opacity-8">                    
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <div class="card-content white-text center">
+                                    <img src="~/asset_default/app-assets/images/logo/login-logo.png" class="responsive-img" alt="Materialize">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <form method="post" class="form-group col-lg-12" asp-action="Logout">
+                                    <button type="submit" class="btn waves-effect waves-light border-round gradient-45deg-green-deep-green col s12">Log Out</button>
+                                </form>
+                            </div>
+                        </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+@section CSS {
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/css/pages/login.css">
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            //wire click event to a link
+            $('#idLogout').click(function () {
+                document.getElementById('frmLogin').submit();
+            });
+        });
+    </script>
+
+}

@@ -1,0 +1,108 @@
+﻿@model IEnumerable<APRP.Web.Domain.Models.RoadClassification>
+
+<table class="subscription-table responsive-table striped" id="page-length-option">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RoadId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RoadName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CreationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            @if (User.IsInRole("Administrators"))
+            {
+                <th>
+                    @Html.DisplayNameFor(model => model.Authority.Code)
+                </th>
+            }
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoadId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RoadName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedBy)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreationDate)
+                </td>
+                @if (item.Status == 0)
+                {
+                    <td>New</td>
+                }
+                @if (item.Status == 1)
+                {
+                    <td>Submitted</td>
+                }
+                @if (item.Status == 2)
+                {
+                    <td>Approved Internally</td>
+                }
+                @if (item.Status == 3)
+                {
+                    <td>Rejected Internally</td>
+                }
+                @if (item.Status == 4)
+                {
+                    <td>Approved by KRB</td>
+                }
+                @if (item.Status == 5)
+                {
+                    <td>Rejected by KRB</td>
+                }
+                @if (item.Status == 6)
+                {
+                    <td>Added to Road Register</td>
+                }
+                @if (User.IsInRole("Administrators"))
+                {
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Authority.Code)
+                    </td>
+                }
+                <td>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.RoadClassification.Change")).Succeeded)
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.ID"><i class="material-icons pink-text">mode_edit</i></a>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.RoadClassification.View")).Succeeded)
+                    {
+                        <a asp-action="Details" asp-route-id="@item.ID"><i class="material-icons pink-text">details</i></a>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.RoadClassification.Delete")).Succeeded)
+                    {
+                        <a asp-action="Delete" asp-route-id="@item.ID"><i class="material-icons pink-text">delete</i></a>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.RoadClassification.View")).Succeeded)
+                    {
+                        <a asp-action="SupportingDocs" asp-route-id="@item.ID"><i class="material-icons pink-text">bookmark_border</i></a>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.RoadClassification.AddRoadtoGIS")).Succeeded)
+                    {
+                        if (item.Status == 4)//Approved by KRB
+                        {
+                            <a id="AddRoadtoGIS" onclick="ShowinPopUp('@Url.Action("AddRoadToGIS","RoadClassifications", new { id = @item.ID },Context.Request.Scheme)','Add Road to GIS')"><i class="material-icons pink-text">language</i></a>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

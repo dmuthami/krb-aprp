@@ -1,0 +1,95 @@
+﻿@model APRP.Web.ViewModels.DisbursementViewModel
+
+@{
+    Layout = null;
+}
+
+
+<table class="subscription-table responsive-table striped" id="page-length-option">
+    <thead>
+        <tr>
+            <th>
+                S.No
+            </th>
+            <th>
+                Code
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Display Name
+            </th>
+            <th>
+                Percent
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.DisbursementCodeLists.Any())
+        {
+            foreach (var item in Model.DisbursementCodeLists)
+            {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SNo)
+            </td>
+            <td>
+                @{
+                    var code = item.Code;
+                    @String.Format("{0:0.0%}", code)
+                }
+            </td>
+            <td>
+                @{
+                    var name = item.Name;
+                    @name
+                }
+            </td>
+            <td>
+
+                @{
+                    var x = item.DisplayName;
+                    @x
+                }
+
+            </td>
+            <td>
+                @{
+                    var percent = item.Percent;
+                    @String.Format("{0:0.0%}", percent)
+                }
+            </td>
+            <td>
+                @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Disbursement.Change")).Succeeded)
+                {
+                    <a onclick="ShowinPopUp('@Url.Action("DisbursementCodeListAddEdit","Disbursement", new { id = @item.ID },Context.Request.Scheme)','Edit')">
+                        <i class="material-icons pink-text">mode_edit</i>
+                    </a>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Disbursement.View")).Succeeded)
+                {
+                    <a asp-controller="Disbursement" asp-action="DisbursementCodeListDetails"
+                       asp-route-Id="@item.ID">
+                        <i class="material-icons pink-text">details</i>
+                    </a>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Disbursement.Delete")).Succeeded)
+                {
+                    <a onclick="ShowinPopUp('@Url.Action("DisbursementCodeListDelete","Disbursement", new { id = @item.ID },Context.Request.Scheme)','Delete')">
+                        <i class="material-icons pink-text">delete</i>
+                    </a>
+                }
+            </td>
+        </tr>
+            }
+        }
+    </tbody>
+</table>
+<script language="javascript">
+    $('#page-length-option').DataTable({
+        "paging": true
+        //,"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    });
+</script>

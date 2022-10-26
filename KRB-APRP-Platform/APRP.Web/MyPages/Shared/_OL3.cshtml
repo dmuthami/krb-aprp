@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="~/css/backend/jquery-ui.css">
+    <link rel="stylesheet" href="~/css/backend/jquery-ui-themes-1.12.1/themes/redmond/jquery-ui.min.css">
+    <link rel="stylesheet" href="/css/backend/lib/datatable/dataTables.bootstrap.min.css">
+
+    @RenderSection("CSS", required: false)
+
+    <style>
+
+        body {
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        html, body, #map {
+            height: 100%;
+            font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif;
+        }
+
+        .lorem {
+            font-style: italic;
+            color: #AAA;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar" class="sidebar collapsed">
+        <!-- Nav tabs -->
+        <div class="sidebar-tabs">
+            <ul role="tablist">
+                <li><a href="#KeNHAPane" role="tab"><i class="fa fa-bars"></i></a></li>
+                <li><a href="#KeRRAPane" role="tab"><i class="fa fa-user"></i></a></li>
+                <li><a href="#KURAPane" role="tab"><i class="fa fa-user"></i></a></li>
+                <li><a href="#KwsPane" role="tab"><i class="fa fa-envelope"></i></a></li>
+                <li><a href="#CountiesPane" role="tab"><i class="fa fa-envelope"></i></a></li>
+                @*<li class="disabled"><a href="#messages" role="tab"><i class="fa fa-envelope"></i></a></li>*@
+                @*<li>
+            <a href="https://github.com/Turbo87/sidebar-v2" role="tab" target="_blank">
+                <i class="fa fa-github"></i>
+            </a>
+        </li>*@
+            </ul>
+            <ul role="tablist">
+                <li><a href="#settings" role="tab"><i class="fa fa-gear"></i></a></li>
+            </ul>
+        </div>
+        <!-- Tab panes -->
+        <div class="sidebar-content">
+
+            <div class="sidebar-pane" id="KeNHAPane">
+                <h1 class="sidebar-header">
+                    KeNHA Roads
+                    <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+                </h1>
+                <table id="idTableKenHA" class="table table-hover table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <th>
+                                Field
+                            </th>
+                            <th>
+                                Value
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="sidebar-pane" id="KeRRAPane">
+                <h1 class="sidebar-header">KeRRA Roads<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <table id="idTableKeRRA" class="table table-hover table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <th>
+                                Field
+                            </th>
+                            <th>
+                                Value
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div class="sidebar-pane" id="KURAPane">
+                <h1 class="sidebar-header">KURA Roads<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                @*<div id="legende">
+            <h2>Legend:</h2>
+
+                    <div class="udiv_legende" id="legende_1">
+                        <img src="http://localhost:8080/geoserver/nrs/wms?service=WMS&REQUEST=GetLegendGraphic&VERSION=1.1.0&FORMAT=image/png&WIDTH=16&HEIGHT=24&LAYER=nrs%3Aparcel">
+                        <br>
+                        <br>
+                    </div>
+                </div>*@
+                <table id="idTableKuRA" class="table table-hover table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <th>
+                                Field
+                            </th>
+                            <th>
+                                Value
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+
+            </div>
+
+            <div class="sidebar-pane" id="KwsPane">
+                <h1 class="sidebar-header">KWS Roads<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <table id="idTableKwS" class="table table-hover table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <th>
+                                Field
+                            </th>
+                            <th>
+                                Value
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+            <div class="sidebar-pane" id="CountiesPane">
+                <h1 class="sidebar-header">Counties Roads<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+                <table id="idTableCountiesRoads" class="table table-hover table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <th>
+                                Field
+                            </th>
+                            <th>
+                                Value
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+            <div class="sidebar-pane" id="settings">
+                <h1 class="sidebar-header">Settings<span class="sidebar-close"><i class="fa fa-caret-left"></i></span></h1>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        @RenderBody()
+    </div>
+    <script src="~/js/backend/vendor/jquery-2.1.4.min.js"></script>
+    <script src="~/js/backend/vendor/jquery-ui.js"></script>
+    <script src="~/js/backend/lib/data-table/datatables.min.js"></script>
+    <script src="~/js/backend/lib/data-table/dataTables.bootstrap.min.js"></script>
+    <script src="~/js/backend/lib/data-table/dataTables.buttons.min.js"></script>
+    <script src="~/js/backend/lib/data-table/buttons.bootstrap.min.js"></script>
+    <script src="~/js/backend/lib/data-table/jszip.min.js"></script>
+    <script src="~/js/backend/lib/data-table/pdfmake.min.js"></script>
+    <script src="~/js/backend/lib/data-table/vfs_fonts.js"></script>
+    <script src="~/js/backend/lib/data-table/buttons.html5.min.js"></script>
+    <script src="~/js/backend/lib/data-table/buttons.print.min.js"></script>
+    <script src="~/js/backend/lib/data-table/buttons.colVis.min.js"></script>
+    <script src="~/js/backend/lib/data-table/datatables-init.js"></script>
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

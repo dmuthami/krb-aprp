@@ -1,0 +1,236 @@
+﻿@model APRP.Web.ViewModels.SubmitRoadWorkSectionPlanApprovalModel
+
+<form enctype="multipart/form-data" id="workplanApprovalForm">
+    @Html.HiddenFor(m => m.WorkplanApprovalBatch.ID)
+    @Html.HiddenFor(m=>m.FinancialYear.ID)
+    @Html.HiddenFor(m=>m.FinancialYear.Code)
+    <div class="row">
+        <div class="col s12">
+            <h5>Provide comment and supporting documents for workplan approvals</h5>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextAreaFor(m => m.Comment, new { @class = "materialize-textarea validate", Style = "height: 20px;", aria_required = "true", @required = "required" })
+            @Html.LabelFor(m => m.Comment)
+        </div>
+    </div>
+    @if (Model.WorkplanApprovalBatch.ApprovalStatus == 0)
+    {
+        <div class="row">
+            <div class="col s8 offset-s2">
+                <div class="row">
+                    <div class="input-field  col s12 m4 l3">
+                        <p>Upload Document</p>
+                    </div>
+                    <div class="input-field col s12 m8 l9">
+                        @Html.TextBoxFor(m => m.SupportDocument, new { @class = "dropify", type = "file", data_allowed_file_extensions = "pdf doc docx", aria_required = "true", @required = "required" })
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                <p>
+                    <label>
+                        @Html.RadioButtonFor(m => m.WorkplanApproval, "Approve", new { value = "Approve" })
+                        <span>Approve</span>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        @Html.RadioButtonFor(m => m.WorkplanApproval, "Reject", new { value = "Reject" })
+                        <span>Reject</span>
+                    </label>
+                </p>
+            </div>
+        </div>
+    }
+
+    @if (Model.WorkplanApprovalBatch.ApprovalStatus == 0)
+    {
+        <div class="row">
+            <div class="col s8 offset-s2">
+                <p>
+                    <label>
+                        @Html.CheckBoxFor(m => m.WorkplanApprovalBatch.isAricsDone)
+                        <span>Arics Conducted Before Workplanning?</span>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        @Html.CheckBoxFor(m => m.WorkplanApprovalBatch.isRoadSafetyEnvironmentDone)
+                        <span>Road safety initiatives and Environmental preservation considered?</span>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        @Html.CheckBoxFor(m => m.WorkplanApprovalBatch.isRoadRelateCourseDone)
+                        <span>Training of staff on road related courses considered?</span>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        @Html.CheckBoxFor(m => m.WorkplanApprovalBatch.isUnitRatesEstimateDone)
+                        <span>Application of Cost Estimation Manual/market survey in formulation unit rates for road maintenance ? </span>
+                    </label>
+                </p>
+                <p>
+                    <label>
+                        @Html.CheckBoxFor(m => m.WorkplanApprovalBatch.isR2000AspectsDone)
+                        <span>For roads to be implemented under Roads2000 Strategy, the work plan should include all aspects of the strategy including giving priority to local labour, use of local resources and mainstreaming of cross cutting issues. This considered? </span>
+                    </label>
+                </p>
+            </div>
+        </div>
+    }
+</form>
+<script src="~/asset_default/app-assets/js/scripts/form-file-uploads.js"></script>
+<script src="~/asset_default/app-assets/vendors/jquery-validation/jquery.validate.min.js"></script>
+<script type="text/javascript">
+
+    $(function () {
+        $("#workplanApprovalForm").validate({
+            rules: {
+                crole: "required",
+                Comment: {
+                    required: false,
+                    minlength: 15
+                },
+                crole: "required",
+                SupportDocument: {
+                    required: true,
+                    minlength: 5
+                },
+                crole: "required",
+                WorkplanApproval: {
+                    required: true
+                }
+            },
+            messages: {
+                Comment: {
+                    required: "Enter comments for the submission",
+                    minlength: "Enter at least 15 characters"
+                },
+                SupportDocument: {
+                    required: "A document is required for submission",
+                    minlength: "Enter at least 5 characters"
+                },
+                WorkplanApproval: {
+                    required: "Select Approval Option"
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function (error, element) {
+                var placement = $(element).data('error');
+                if (placement) {
+                    $(placement).append(error)
+                } else {
+                    error.insertAfter(element);
+                }
+            }
+        });
+    });
+
+
+    var SubmitWorkPlanForApproval = function () {
+
+        var IsValid = $("#workplanApprovalForm").valid();
+
+        if (IsValid) {
+            if ($('#SupportDocument').length) { //check if element exists
+                var fileName = $('#SupportDocument').val().replace('C:\\fakepath\\', '');
+                var fileNameExtension = "." + fileName.split(".").pop();
+                var fileNameBase = fileName.substring(0, fileName.length - fileNameExtension.length);
+
+                if (fileNameBase.length <= 150) { //limit file name size to 100 characters
+                    var form = $('#workplanApprovalForm')[0];
+                    var formData = new FormData(form);
+                    event.preventDefault();
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: "/workplan/SubmitWorkplanInternal",
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (data) {
+                                if (data.success) {
+                                    $("#modalViewApprovalId").modal('close');
+                                    swal({
+                                        title: "Success",
+                                        text: "Record has been submitted successfully!",
+                                        timer: 2500,
+                                        icon: "success",
+                                        buttons: false
+                                    }).then(function () {
+                                        window.location.href = data.href;
+                                    });
+                                }
+                                else {
+                                    swal(data.message, {
+                                        title: 'Error Occured',
+                                        icon: "error"
+                                    });
+                                }
+                            }
+                        }
+                    );
+                }
+                else {
+                    swal({
+                        title: 'Warning',
+                        icon: 'warning',
+                        text: "The filename length has exceeded 150 characters. Please check!"
+                    })
+                }
+            }
+            else {
+                var form = $('#workplanApprovalForm')[0];
+                var formData = new FormData(form);
+                event.preventDefault();
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: "/workplan/SubmitWorkplanInternal",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            if (data.success) {
+                                $("#modalViewApprovalId").modal('close');
+                                swal({
+                                    title: "Success",
+                                    text: "Record has been submitted successfully!",
+                                    timer: 2500,
+                                    icon: "success",
+                                    buttons: false
+                                }).then(function () {
+                                    window.location.href = data.href;
+                                });
+                            }
+                            else {
+                                swal(data.message, {
+                                    title: 'Error Occured',
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    }
+                );
+            }
+        }
+        else {
+            swal("You have validation errors on your form. Please check!", {
+                title: 'Error Occured',
+                icon: "error"
+            });
+        }
+
+    }
+</script>

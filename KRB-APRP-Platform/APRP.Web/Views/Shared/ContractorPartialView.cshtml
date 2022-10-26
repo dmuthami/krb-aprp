@@ -1,0 +1,97 @@
+﻿@model APRP.Web.Domain.Models.Contractor
+<div class="row">
+    <form id="contractorForm" class="col s12">
+        @Html.HiddenFor(m => m.ID)
+        <h4 class="card-title">Contractor Detaimls</h4>
+        <div class="row">
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.KRAPin, new { @class = "validate active" })
+                @Html.LabelFor(m => m.KRAPin, new { @class = "active" })
+            </div>
+
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.Name, new { @class = "validate active" })
+                @Html.LabelFor(m => m.Name, new { @class = "active" })
+            </div>
+
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.Telephone, new { @class = "validate active" })
+                @Html.LabelFor(m => m.Telephone, new { @class = "active" })
+            </div>
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.Email, new { @class = "validate active" })
+                @Html.LabelFor(m => m.Email, new { @class = "active" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.POBox, new { @class = "validate active" })
+                @Html.LabelFor(m => m.POBox, new { @class = "active" })
+            </div>
+
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.Town, new { @class = "validate active" })
+                @Html.LabelFor(m => m.Town, new { @class = "active" })
+            </div>
+        </div>
+
+        <h4 class="card-title">Bank Details</h4>
+        <div class="row">
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.BankName, new { @class = "validate active" })
+                @Html.LabelFor(m => m.BankName, new { @class = "active" })
+            </div>
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.BankBranchName, new { @class = "validate active" })
+                @Html.LabelFor(m => m.BankBranchName, new { @class = "active" })
+            </div>
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.BankBranchCode, new { @class = "validate active" })
+                @Html.LabelFor(m => m.BankBranchCode, new { @class = "active" })
+            </div>
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.BankAccountNumber, new { @class = "validate active" })
+                @Html.LabelFor(m => m.BankAccountNumber, new { @class = "active" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <a class="waves-effect waves-light btn right" href="#!" onclick="SaveContractor()"><i class="material-icons right">send</i> Save Contractor</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    //submit the form saving : Update the work package
+    var SaveContractor = function () {
+        var sendForm = $("#contractorForm").serialize();
+        $.ajax(
+            {
+                type: "POST",
+                url: "/Admin/SaveContractor",
+                data: sendForm,
+                success: function (data) {
+                    if (data.success) {
+                        $("#modalViewId").modal('close');
+                        swal({
+                            title: "Success",
+                            text: "Contractor created successfully!",
+                            timer: 1500,
+                            icon: "success",
+                            buttons: false
+                        }).then(function () {
+                            window.location.href = data.href;
+                        });
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Error Occured',
+                            icon: "error",
+                        });
+                    }
+                }
+
+            }
+        );
+    }
+</script>

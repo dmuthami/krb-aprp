@@ -1,0 +1,77 @@
+﻿@model APRP.Web.Domain.Models.WorkPlanPackage
+
+<div class="row">
+    <form id="workplanPackageFormEdit" class="col s12">
+        @Html.HiddenFor(m => m.ID)
+        <div class="row">
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.Code, new { @class = "active" })
+                @Html.LabelFor(m => m.Code, new { @class = "active" })
+            </div>
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.Name, new { @class = "validate active" })
+                @Html.LabelFor(m => m.Name, new { @class = "active" })
+            </div>
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.Contigencies, new { @class = "validate active" })
+                @Html.LabelFor(m => m.Contigencies, new { @class = "active" })
+            </div>
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.EngineerEstimate, new { @class = "active", @disabled = "disabled" })
+                @Html.LabelFor(m => m.EngineerEstimate, new { @class = "active" })
+            </div>
+        </div>
+        <!--
+     <div class="row">
+         <div class="input-field col m6 s12">
+             @Html.TextBoxFor(m => m.VariationAmount, new { @class = "active validate " })
+             @Html.LabelFor(m => m.VariationAmount,  new { @class = "active" } )
+         </div>
+         <div class="input-field col m6 s12">
+             @Html.TextBoxFor(m => m.VariationPercentage, new { @class = "active validate" })
+             @Html.LabelFor(m => m.VariationPercentage,  new { @class = "active" } )
+         </div>
+
+     </div>
+        -->
+    </form>
+
+</div>
+
+<script type="text/javascript">
+
+    //submit the form saving : Update the work package
+    var SaveEditPackage = function () {
+        var sendForm = $("#workplanPackageFormEdit").serialize();
+        $.ajax(
+            {
+                type: "POST",
+                url: "/WorkPlanPackage/EditPackage",
+                data: sendForm,
+                success: function (data) {
+                    if (data.success) {
+                        $("#modalViewPackageId").modal('close');
+                        
+                        swal({
+                            title: "Success",
+                            text: "Package information updated successfully!",
+                            timer: 1500,
+                            icon: "success",
+                            buttons: false
+                        }).then(function () {
+                            window.location.href = data.href;
+                        });
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Error Occured',
+                            icon: "error",
+                        });
+                    }
+                }
+
+            }
+        );
+    }
+
+</script>

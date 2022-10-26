@@ -1,0 +1,75 @@
+﻿@model APRP.Web.Domain.Models.EmploymentDetail
+
+
+@if (Model.ID > 0)
+{
+    <h5>Contract progress reporting for  Quarter : @Model.Period </h5>
+}
+else
+{
+    <h5>Contract progress reporting for  Quarter : @(Model.Period +1)</h5>
+}
+
+<hr />
+<div class="row">
+    <form id="contractEmploymentFormEdit" class="col s12">
+        @Html.HiddenFor(m => m.ID)
+        @Html.HiddenFor(m=>m.Period)
+        @Html.HiddenFor(m => m.Contract.ID)
+        <div class="row">
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.MaleCount, new { @class = "validate active" })
+                @Html.LabelFor(m => m.MaleCount, new { @class = "active" })
+            </div>
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.FemaleCount, new { @class = "active" })
+                @Html.LabelFor(m => m.FemaleCount, new { @class = "active" })
+            </div>
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.MaleMandays, new { @class = "validate active" })
+                @Html.LabelFor(m => m.MaleMandays, new { @class = "active" })
+            </div>
+            <div class="input-field col m6 s12">
+                @Html.TextBoxFor(m => m.FemaleMandays, new { @class = "active" })
+                @Html.LabelFor(m => m.FemaleMandays, new { @class = "active" })
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+
+    //submit the form saving : Update the work package
+    var SavePackageEmploymentDetails  = function () {
+        var sendForm = $("#contractEmploymentFormEdit").serialize();
+        $.ajax(
+            {
+                type: "POST",
+                url: "/WorkPlanPackage/EditEmploymentDetails",
+                data: sendForm,
+                success: function (data) {
+                    if (data.success) {
+                        $("#modalViewEmploymentDetailsId").modal('close');
+                        swal({
+                            title: "Success",
+                            text: "Contrace Employment details updated successfully!",
+                            timer: 1500,
+                            icon: "success",
+                            buttons: false
+                        }).then(function () {
+                            window.location.href = data.href;
+                        });
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Error Occured',
+                            icon: "error",
+                        });
+                    }
+                }
+
+            }
+        );
+    }
+
+</script>

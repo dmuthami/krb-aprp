@@ -1,0 +1,33 @@
+﻿@model APRP.Web.ViewModels.KerraRoadViewModel
+
+<table class="subscription-table responsive-table striped" id="page-length-option">
+    <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KerraRoad.RdNum)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KerraRoad.RdName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.KerraRoad.Section_ID)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.KerraRoad.Sec_Name)
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.KerraRoad.SurfaceType)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.KerraRoad.RdClass)
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.KerraRoad.Length)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+</table>

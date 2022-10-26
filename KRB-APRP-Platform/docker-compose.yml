@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  aprp.web:
+    image: ${DOCKER_REGISTRY-}aprpweb
+    build:
+      context: .
+      dockerfile: APRP.Web/Dockerfile

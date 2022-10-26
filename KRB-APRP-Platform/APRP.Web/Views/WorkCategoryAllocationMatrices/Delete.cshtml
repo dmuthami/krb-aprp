@@ -1,0 +1,430 @@
+﻿@model APRP.Web.Domain.Models.WorkCategoryAllocationMatrix
+
+@{
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout_App.cshtml";
+}
+
+@section vendorCss
+{
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/extensions/responsive/css/responsive.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/css/select.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/dropify/css/dropify.min.css">
+}
+
+@section customCss
+{
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/css/pages/app-chat.css">
+    <link href="~/asset_default/app-assets/vendors/sweetalert/sweetalert.css" type="text/css" rel="stylesheet" />
+}
+
+@section aside
+{
+    <!-- BEGIN: SideNav-->
+    <aside class="sidenav-main nav-expanded nav-lock nav-collapsible sidenav-dark sidenav-active-rounded">
+
+        <div class="brand-sidebar">
+            <h1 class="logo-wrapper">
+                <a class="brand-logo darken-1" asp-controller="Home" asp-action="Dashboard">
+                    <img src="~/asset_default/app-assets/images/logo/menu-logo.png" alt="REPARS logo" /><span class="logo-text hide-on-med-and-down">REPARS</span>
+                </a>
+                <a class="navbar-toggler" href="#"><i class="material-icons">radio_button_checked</i></a>
+            </h1>
+        </div>
+
+        <ul class="sidenav sidenav-collapsible leftside-navigation collapsible sidenav-fixed menu-shadow" id="slide-out" data-menu="menu-navigation" data-collapsible="accordion">
+            <li class="active bold">
+                <a class="waves-effect waves-cyan active " asp-controller="Home" asp-action="Dashboard"><i class="material-icons">home</i><span id="idHomeAuthority" class="menu-title" data-i18n="">Home</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan" href="#">
+                    <i class="material-icons">timeline</i>
+                    <span class="menu-title" data-i18n="">Road Networks</span>
+                </a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        <li>
+                            <a asp-controller="Road" asp-action="Index" data-i18n="" class="collapsible-body">
+                                <i class="material-icons">radio_button_unchecked</i><span>Road Network</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="collapsible-header waves-effect waves-cyan" href="#">
+                                <i class="material-icons">radio_button_unchecked</i>
+                                <span class="menu-title" data-i18n="">Road Classification</span>
+                            </a>
+                            <div class="collapsible-body">
+                                <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadClassCodeUnits" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Class</span></a>
+                                    </li>
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadConditionCodeUnits" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Condition</span></a>
+                                    </li>
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadClassifications" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Classifications</span></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Administrator.Role.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan" href="#">
+                        <i class="material-icons">supervisor_account</i>
+                        <span class="menu-title" data-i18n="">User Management</span>
+                    </a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            <li>
+                                <a class="collapsible-body" asp-page="/UserAccess/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>User Access List</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/users/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Users</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/roles/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Approvals</span></a>
+                            </li>
+
+                            <li>
+                                <a class="collapsible-body" asp-controller="Permissions" asp-action="ListRoleClaims" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Groups</span></a>
+                            </li>
+                        </ul>
+
+                    </div>
+                </li>
+            }
+
+            <!--ARICS Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">filter_tilt_shift</i><span class="menu-title" data-i18n="">ARICS</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.ConductARICS")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-page="/ARICZ/UploadARICS" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Upload ARICS</span></a>
+                                </li>
+                            }
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.ConductARICS")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-page="/ARICZ/ConductARICS" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Direct Data Entry</span></a>
+                                </li>
+                            }
+                            <li><a asp-page="/aricz/aricshome" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARICS Summary</span></a></li>
+                            <li><a asp-controller="arics" asp-action="aricsapprovalagency" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARICS Approvals</span></a></li>
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End ARICS Menu Group-->
+
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.GIS.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">filter_tilt_shift</i><span class="menu-title" data-i18n="">GIS</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            <li>
+                                <a target="_blank" asp-page="/nrsmap/Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>View GIS Roads</span></a>
+                            </li>
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KENHA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKENHA" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>KenHA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KURA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKURA" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KuRA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KERRA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKERRA" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KeRRA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KWS.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKWS" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KWS GIS</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Counties.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexCounties" data-i18n="" class="collapsible-body"><i class="material-icons"></i><span>Counties GIS</span></a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+            }
+
+            <!--Budgeting Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Finance.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">monetization_on</i><span class="menu-title" data-i18n="">Budgeting</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                            <li>
+                                <a asp-controller="Admin" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Financial Year</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/AllocationCodeUnitRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Allocation Ratios</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/AllocationRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Allocation Figures</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-controller="RevenueCollectionCodeUnitTypes" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection Types</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/RevenueCollectionCodeUnitRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection Code Units</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/RevenueCollectionRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection</span></a>
+                            </li>
+                            <li><a asp-controller="RevenueCollection" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Budget Approvals</span></a></li>
+                            <li><a asp-controller="Disbursement" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Disbursement</span></a></li>
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End Budgeting Menu Group-->
+            <!--Workplanning Menu Group-->
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">monetization_on</i><span class="menu-title" data-i18n="">Work Planning</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        <li>
+                            <a asp-controller="workplan" asp-action="Prioritization" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Prioritization</span></a>
+                        </li>
+                        <li>
+                            <a asp-controller="workplan" asp-action="GetRoadsForWorkPlan" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Work Plan</span></a>
+                        </li>
+                        <li>
+                            <a asp-controller="workplan" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARWP Summary</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <!--End Workplanning Menu Group-->
+
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">invert_colors</i><span class="menu-title" data-i18n="">Contract Management</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="RoadWorkPackaging" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Work Packaging</span></a>
+                        </li>
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="ContractDetails" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contract Details</span></a>
+                        </li>
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="ProjectProgressDetails" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Project Progress</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Reports" asp-action="index"><i class="material-icons">import_contacts</i><span class="menu-title" data-i18n="">Report Management</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Issue" asp-action="Index"><i class="material-icons">chat</i><span class="menu-title" data-i18n="">Complaints / Issues</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">invert_colors</i><span class="menu-title" data-i18n="">Training</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.QuarterCodeList.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-page="/QuarterCodeListRx/Index" data-i18n=""><i class="material-icons"></i><span>Quarter Code List</span></a>
+                            </li>
+                        }
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.QuarterCodeUnit.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-page="/QuarterCodeUnitRx/Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Quarter Code Unit</span></a>
+                            </li>
+                        }
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.TrainingCourse.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="TrainingCourses"
+                                   asp-action="Index" data-i18n="">
+                                    <i class="material-icons">radio_button_unchecked</i>
+                                    <span>Courses</span>
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a class="collapsible-body" asp-page="/TrainingRx/Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Training</span></a>
+                        </li>
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Training.Report")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="Training" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Training Report</span></a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+            <!--Administration Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Administrator.Role.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">add_to_queue</i><span class="menu-title" data-i18n="">Admin</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ActivityGroup.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="Admin" asp-action="UnitCost" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Activity Code List</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundingSource.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="FundingSources" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Funding Sources</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundType.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="FundTypes" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Fund Types</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Authority.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="Authorities" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Authorities</span></a>
+                                </li>
+                            }
+
+                                                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Contractor.View")).Succeeded){<li><a class="collapsible-body" asp-controller="Admin" asp-action="Contractors" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contractors</span></a></li>}@if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICSYear.View")).Succeeded){<li><a class="collapsible-body" asp-controller="ARICS" asp-action="ARICSYearIndex" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Calendar Year</span></a></li>}
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End Administration Menu Group-->
+
+        </ul>
+        <div class="navigation-background"></div>
+        <a class="sidenav-trigger btn-sidenav-toggle btn-floating btn-medium waves-effect waves-light hide-on-large-only" href="#" data-target="slide-out"><i class="material-icons">menu</i></a>
+    </aside>
+    <!-- END: SideNav-->
+}
+
+<div class="chat-application">
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <p class="caption">
+                        <h4>RevenueCollectionCodeUnit Details</h4>
+                    </p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-content">
+                    <div>
+
+                        <dl class="row">
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.Authority)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.Authority.Code)
+                            </dd>
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.FinancialYear)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.FinancialYear.Code)
+                            </dd>
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.Percent)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.Percent)
+                            </dd>
+                            <dt class="col-sm-2">
+                                @Html.DisplayNameFor(model => model.WorkCategory)
+                            </dt>
+                            <dd class="col-sm-10">
+                                @Html.DisplayFor(model => model.WorkCategory.Code)
+                            </dd>
+                        </dl>
+
+                        <form asp-action="Delete">
+                            <input type="hidden" asp-for="ID" />
+                            <input type="submit" value="Delete" class="btn btn-danger" /> |
+                            <a asp-action="Index">Back to List</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section vendorJS
+{
+    <script src="~/asset_default/app-assets/vendors/sweetalert/sweetalert.min.js" type="text/javascript"></script>
+    <script src="~/asset_default/app-assets/vendors/dropify/js/dropify.min.js"></script>
+}
+
+@section Scripts {
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+
+            username = $('#applicationUser_UserName').val();
+            $.ajax({
+                method: "POST",
+                url: "/UserManagement/GetShortName",
+                datatype: "json",
+                data: {}
+            })
+                .done(function (data) {
+                    //write json array object
+                    console.log(data);
+                    //Set Road Section ID to null
+                    $("#idSpan").text(data.sn);
+                    var Val1 = $("#idHomeAuthority").text();
+                    $("#idHomeAuthority").text(Val1 + "-" + data.authorityCode);$("#idGlobalAuthority").text(data.authorityName); 
+                });
+        });
+    </script>
+}

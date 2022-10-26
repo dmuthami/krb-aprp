@@ -1,0 +1,54 @@
+﻿@model APRP.Web.Domain.Models.Contractor
+
+@if (Model != null)
+{
+    <div class="row">
+        <div class="input-field col m10 s12">
+            @Html.TextBoxFor(m => m.Name, new { @class = "validate", @readonly= "readonly" })
+            @Html.LabelFor(m => m.Name, new { @class = "active" })
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="input-field col m5 s10">
+            @Html.TextBoxFor(m => m.BankName, new { @class = "validate", @readonly= "readonly" })
+            @Html.LabelFor(m => m.BankName, new { @class = "active" })
+        </div>
+        <div class="input-field col m5 s10">
+            @Html.TextBoxFor(m => m.BankBranchName, new { @class = "validate", @readonly= "readonly" })
+            @Html.LabelFor(m => m.BankBranchName, new { @class = "active" })
+        </div>
+        <div class="input-field col m5 s10">
+            @Html.TextBoxFor(m => m.BankAccountNumber, new { @class = "validate", @readonly= "readonly" })
+            @Html.LabelFor(m => m.BankAccountNumber, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col m5 s10">
+            @Html.TextBoxFor(m => m.Telephone, new { @class = "validate", @readonly= "readonly" })
+            @Html.LabelFor(m => m.Telephone, new { @class = "active" })
+        </div>
+        <div class="input-field col m5 s10">
+            @Html.TextBoxFor(m => m.Email, new { @class = "validate", @readonly= "readonly" })
+            @Html.LabelFor(m => m.Email, new { @class = "active" })
+        </div>
+        <div class="input-field col m5 s10">
+            @Html.TextBoxFor(m => m.POBox, new { @class = "validate", @readonly= "readonly" })
+            @Html.LabelFor(m => m.POBox, new { @class = "active" })
+        </div>
+        <div class="input-field col m5 s10">
+            @Html.TextBoxFor(m => m.Town, new { @class = "validate", @readonly= "readonly" })
+            @Html.LabelFor(m => m.Town, new { @class = "active" })
+        </div>
+    </div>
+
+}
+
+else
+{
+    <div class="row">
+        <div class="col m10 s12">
+            <span>There was no record found with the pin : @Model.KRAPin</span>    
+        </div>"
+    </div>
+}

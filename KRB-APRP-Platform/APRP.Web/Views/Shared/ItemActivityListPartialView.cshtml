@@ -1,0 +1,70 @@
+﻿@model APRP.Web.ViewModels.ItemActivityGroupViewModel
+
+@{
+    Layout = null;
+}
+
+
+<table id="page-length-option" class="subscription-table responsive-table striped">
+    <thead>
+        <tr>
+            <th>Item Code</th>
+            <th>Sub Item</th>
+            <th>S/ Sub Item</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.ItemActivityUnitCostList.Any())
+        {
+            @foreach (var activity in Model.ItemActivityUnitCostList.OrderBy(i => i.ID))
+            {
+                <tr>
+                    <td>@activity.ItemCode</td>
+                    <td>@activity.SubItemCode</td>
+                    <td>@activity.SubSubItemCode</td>
+                    <td>@activity.Description</td>
+                <td class="center-align">
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ActivityItem.Change")).Succeeded)
+                    {
+                        <a asp-action="ActivityListEdit" asp-route-id="@activity.ID"><i class="material-icons pink-text">mode_edit</i></a><text>&nbsp;</text>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ActivityItem.View")).Succeeded)
+                    {
+                        <a asp-action="ActivityListDetails" asp-route-id="@activity.ID"><i class="material-icons pink-text">play_arrow</i></a><text>&nbsp;</text>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ActivityItem.Delete")).Succeeded)
+                    {
+                        <a asp-action="ActivityListDelete" asp-route-id="@activity.ID"><i class="material-icons pink-text">clear</i></a><text>&nbsp;</text>
+                    }
+                </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="9">There are no activity records to display. Please set upload the data</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="row">
+    <div class="col xl12 l12 m12 s12">
+        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ActivityItem.Add")).Succeeded)
+        {
+            <a asp-action="ActivityListCreate" asp-route-ItemActivityGroupId="@Model.ItemActivityGroupId" class="waves-effect waves-light btn">
+                <i class="material-icons right">gps_fixed</i>Add Activity Item
+            </a>
+        }
+        <a id="IDBackToList2" class="waves-effect waves-light btn"><i class="material-icons right">gps_fixed</i>Back</a>
+    </div>
+</div>
+<script language="javascript">
+    $('#page-length-option').DataTable({
+        "paging": true
+        //,"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    });
+</script>

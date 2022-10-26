@@ -1,0 +1,44 @@
+﻿@model APRP.Web.ViewModels.BudgetVoteViewModel
+
+<dl class="row">
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.BudgetCeilingComputation.Code)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.BudgetCeilingComputation.Code)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.BudgetCeilingComputation.Name)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.BudgetCeilingComputation.Name)
+    </dd>
+
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.BudgetCeilingComputation.Amount)
+    </dt>
+    <dd class="col-sm-10">
+        @{
+            var amount = Model.BudgetCeilingComputation.Amount;
+            @String.Format("{0:0,0.00}", amount)
+        }
+        @*@Html.DisplayFor(model => model.BudgetCeilingComputation.Amount)*@
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.BudgetCeilingComputation.FinancialYear.Code)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.BudgetCeilingComputation.FinancialYear.Code)-
+        @Html.DisplayFor(model => model.BudgetCeilingComputation.FinancialYear.Summary)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.BudgetCeilingComputation.Authority.Code)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.BudgetCeilingComputation.Authority.Code)-
+        @Html.DisplayFor(model => model.BudgetCeilingComputation.Authority.Name)
+    </dd>
+</dl>
+
+<a class="btn btn-small" asp-controller="RevenueCollection"
+   asp-action="BudgetVoteListIndex">Back to Budget Vote List</a>

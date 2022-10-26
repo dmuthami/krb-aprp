@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/KRB-APRP-Platform/APRP.Services.AuthorityAPI/logs
+/KRB-APRP-Platform/obj
+/KRB-APRP-Platform/bin/Debug
+/KRB-APRP-Platform/APRP.Web/bin/Release/net6.0
+/KRB-APRP-Platform/APRP.Services.AuthorityAPI/Migrations

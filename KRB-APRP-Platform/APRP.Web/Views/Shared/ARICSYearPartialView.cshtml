@@ -1,0 +1,55 @@
+﻿@model APRP.Web.ViewModels.ARICSYearViewModel
+
+@{
+    Layout = null;
+}
+
+
+<table class="subscription-table responsive-table striped" id="page-length-option">
+    <thead>
+        <tr>
+            <th>
+                Year
+            </th>
+            <th>
+                Description
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.ARICSYears.Any())
+        {
+            foreach (var item in Model.ARICSYears)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Year)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Description)
+                    </td>
+
+                    <td>
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Disbursement.View")).Succeeded)
+                        {
+                            @*<a asp-controller="Disbursement" asp-action="Details" asp-route-ID="@item.ID">
+                                <i class="material-icons pink-text">details</i>
+                            </a>*@
+                            <a onclick="ShowinPopUp('@Url.Action("ARICSYearDelete","ARICS", new { ID = @item.ID },Context.Request.Scheme)','Delete')">
+                                <i class="material-icons pink-text">delete</i>
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<script language="javascript">
+    $('#page-length-option').DataTable({
+        "paging": true
+        //,"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    });
+</script>

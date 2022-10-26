@@ -1,0 +1,813 @@
+﻿@model APRP.Web.Domain.Models.PaymentCertificate
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout_App.cshtml";
+}
+
+@section vendorCss
+{
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/extensions/responsive/css/responsive.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/css/select.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/dropify/css/dropify.min.css">
+}
+
+@section customCss
+{
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/css/pages/app-chat.css">
+    <link href="~/asset_default/app-assets/vendors/sweetalert/sweetalert.css" type="text/css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/css/custom/print.min.css" />
+}
+
+@section aside
+{
+    <!-- BEGIN: SideNav-->
+    <aside class="sidenav-main nav-expanded nav-lock nav-collapsible sidenav-dark sidenav-active-rounded">
+
+        <div class="brand-sidebar">
+            <h1 class="logo-wrapper">
+                <a class="brand-logo darken-1" asp-controller="Home" asp-action="Dashboard">
+                    <img src="~/asset_default/app-assets/images/logo/menu-logo.png" alt="REPARS logo" /><span class="logo-text hide-on-med-and-down">REPARS</span>
+                </a>
+                <a class="navbar-toggler" href="#"><i class="material-icons">radio_button_checked</i></a>
+            </h1>
+        </div>
+
+        <ul class="sidenav sidenav-collapsible leftside-navigation collapsible sidenav-fixed menu-shadow" id="slide-out" data-menu="menu-navigation" data-collapsible="accordion">
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Home" asp-action="Dashboard"><i class="material-icons">home</i><span id="idHomeAuthority" class="menu-title" data-i18n="">Home</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan" href="#">
+                    <i class="material-icons">timeline</i>
+                    <span class="menu-title" data-i18n="">Road Networks</span>
+                </a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        <li>
+                            <a asp-controller="Road" asp-action="Index" data-i18n="" class="collapsible-body">
+                                <i class="material-icons">radio_button_unchecked</i><span>Road Network</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="collapsible-header waves-effect waves-cyan" href="#">
+                                <i class="material-icons">radio_button_unchecked</i>
+                                <span class="menu-title" data-i18n="">Road Classification</span>
+                            </a>
+                            <div class="collapsible-body">
+                                <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadClassCodeUnits" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Class</span></a>
+                                    </li>
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadConditionCodeUnits" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Condition</span></a>
+                                    </li>
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadClassifications" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Classifications</span></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Administrator.Role.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan" href="#">
+                        <i class="material-icons">supervisor_account</i>
+                        <span class="menu-title" data-i18n="">User Management</span>
+                    </a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            <li>
+                                <a class="collapsible-body" asp-page="/UserAccess/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>User Access List</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/users/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Users</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/roles/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Approvals</span></a>
+                            </li>
+
+                            <li>
+                                <a class="collapsible-body" asp-controller="Permissions" asp-action="ListRoleClaims" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Groups</span></a>
+                            </li>
+                        </ul>
+
+                    </div>
+                </li>
+            }
+
+            <!--ARICS Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">filter_tilt_shift</i><span class="menu-title" data-i18n="">ARICS</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.ConductARICS")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-page="/ARICZ/UploadARICS" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Upload ARICS</span></a>
+                                </li>
+                            }
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.ConductARICS")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-page="/ARICZ/ConductARICS" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Direct Data Entry</span></a>
+                                </li>
+                            }
+                            <li><a asp-page="/aricz/aricshome" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARICS Summary</span></a></li>
+                            <li><a asp-controller="arics" asp-action="aricsapprovalagency" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARICS Approvals</span></a></li>
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End ARICS Menu Group-->
+
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.GIS.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">filter_tilt_shift</i><span class="menu-title" data-i18n="">GIS</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            <li>
+                                <a target="_blank" asp-page="/nrsmap/Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>View GIS Roads</span></a>
+                            </li>
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KENHA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKENHA" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>KenHA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KURA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKURA" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KuRA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KERRA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKERRA" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KeRRA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KWS.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKWS" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KWS GIS</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Counties.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexCounties" data-i18n="" class="collapsible-body"><i class="material-icons"></i><span>Counties GIS</span></a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+            }
+
+            <!--Budgeting Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Finance.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">monetization_on</i><span class="menu-title" data-i18n="">Budgeting</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                            <li>
+                                <a asp-controller="Admin" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Financial Year</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/AllocationCodeUnitRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Allocation Ratios</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/AllocationRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Allocation Figures</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-controller="RevenueCollectionCodeUnitTypes" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection Types</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/RevenueCollectionCodeUnitRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection Code Units</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/RevenueCollectionRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection</span></a>
+                            </li>
+                            <li><a asp-controller="RevenueCollection" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Budget Approvals</span></a></li>
+                            <li><a asp-controller="Disbursement" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Disbursement</span></a></li>
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End Budgeting Menu Group-->
+            <!--Workplanning Menu Group-->
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">monetization_on</i><span class="menu-title" data-i18n="">Work Planning</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        <li>
+                            <a asp-controller="workplan" asp-action="Prioritization" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Prioritization</span></a>
+                        </li>
+                        <li>
+                            <a asp-controller="workplan" asp-action="GetRoadsForWorkPlan" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Work Plan</span></a>
+                        </li>
+                        <li>
+                            <a asp-controller="workplan" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARWP Summary</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <!--End Workplanning Menu Group-->
+
+            <li class="active bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">invert_colors</i><span class="menu-title" data-i18n="">Contract Management</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                                                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Contractor.View")).Succeeded){<li><a class="collapsible-body" asp-controller="Admin" asp-action="Contractors" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contractors</span></a></li>}@if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICSYear.View")).Succeeded){<li><a class="collapsible-body" asp-controller="ARICS" asp-action="ARICSYearIndex" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Calendar Year</span></a></li>}
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="Admin" asp-action="Contractors" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contractors</span></a>
+                            </li>
+                        }
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="RoadWorkPackaging" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Work Packaging</span></a>
+                        </li>
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="ContractDetails" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contract Details</span></a>
+                        </li>
+                        <li>
+                            <a class="active collapsible-body" asp-controller="WorkPlanPackage" asp-action="ProjectProgressDetails" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Project Progress</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Reports" asp-action="index"><i class="material-icons">import_contacts</i><span class="menu-title" data-i18n="">Report Management</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Issue" asp-action="Index"><i class="material-icons">chat</i><span class="menu-title" data-i18n="">Complaints / Issues</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">invert_colors</i><span class="menu-title" data-i18n="">Training</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.QuarterCodeList.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-page="/QuarterCodeListRx/Index" data-i18n=""><i class="material-icons"></i><span>Quarter Code List</span></a>
+                            </li>
+                        }
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.QuarterCodeUnit.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-page="/QuarterCodeUnitRx/Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Quarter Code Unit</span></a>
+                            </li>
+                        }
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.TrainingCourse.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="TrainingCourses"
+                                   asp-action="Index" data-i18n="">
+                                    <i class="material-icons">radio_button_unchecked</i>
+                                    <span>Courses</span>
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a class="collapsible-body" asp-page="/TrainingRx/Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Training</span></a>
+                        </li>
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Training.Report")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="Training" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Training Report</span></a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+            <!--Administration Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Administrator.Role.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">add_to_queue</i><span class="menu-title" data-i18n="">Admin</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ActivityGroup.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="Admin" asp-action="UnitCost" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Activity Code List</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundingSource.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="FundingSources" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Funding Sources</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundType.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="FundTypes" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Fund Types</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Authority.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="Authorities" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Authorities</span></a>
+                                </li>
+                            }
+
+                                                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Contractor.View")).Succeeded){<li><a class="collapsible-body" asp-controller="Admin" asp-action="Contractors" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contractors</span></a></li>}@if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICSYear.View")).Succeeded){<li><a class="collapsible-body" asp-controller="ARICS" asp-action="ARICSYearIndex" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Calendar Year</span></a></li>}
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End Administration Menu Group-->
+        </ul>
+        <div class="navigation-background"></div>
+        <a class="sidenav-trigger btn-sidenav-toggle btn-floating btn-medium waves-effect waves-light hide-on-large-only" href="#" data-target="slide-out"><i class="material-icons">menu</i></a>
+    </aside>
+    <!-- END: SideNav-->
+}
+
+<div class="section">
+    <div class="row">
+        <div class="col s12 m12 l12">
+            <div class="card">
+                <div class="card-content">
+                    <a class="waves-effect waves-light btn-small" asp-controller="WorkPlanPackage" asp-action="ProjectPaymentCertificates" asp-route-id="@Model.Contract.ID"><i class="material-icons left">arrow_back</i> Back to contract payment certificates</a>
+                    <a id="pdf-download-link" class="waves-effect waves-light btn-small right" href="#!" onclick="generatePDF()"><i class="material-icons left">print</i>&nbsp; Print Certificate</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Invoice-->
+    <div class="row">
+        <div class="col s12 m12 l12">
+            <div id="basic-tabs" class="card card card-default black-text">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Contract payment certificates
+                    </h4>
+                    <div id="invoice-print" class="print-wrap">
+                        <div class="row section">
+                            <div class="col s12">
+                                <h5 class="text-uppercase center-align strong">Summary Of Statement For Payment Of Account</h5>
+                                <h5 class="text-uppercase center-align strong">Contract No. @Model.Contract.WorkPlanPackage.Code</h5>
+                            </div>
+                        </div>
+                        <div class="row section">
+                            <div class="col s12 m6 l6">
+                                <p class="strong">CONTRACT NAME : @Model.Contract.WorkPlanPackage.Name</p>
+                                <p class="strong">CONTRACTOR : @(Model.Contract.Contractor != null ? Model.Contract.Contractor.Name : "")</p>
+                                <p class="strong">CONTRACT SUM : KSH @Model.Contract.ContractSumPackage.ToString("N")</p>
+                                <p class="strong">REVISED CONTRACT SUM : KSH @Model.Contract.ContractRevisionSum.ToString("N")</p>
+                            </div>
+                            <div class="col s12 m6 l6">
+                                <div class="row">
+                                    <div class="col s6">
+                                        <p>&nbsp;</p>
+                                        <p>&nbsp;</p>
+                                        <p class="strong">Region </p>
+                                        <p class="strong">Administrative Boundary :  </p>
+                                    </div>
+                                    <div class="col s6">
+                                        <p class="strong">CERTIFICATE NO : <span class="right-align">@Model.CertificateNo</span> </p>
+                                        <p class="strong">VALUATION AS AT : ________________ </p>
+                                        <p class="strong">F Year : <span class="right-align">@(Model.Contract.WorkPlanPackage.FinancialYear != null ? Model.Contract.WorkPlanPackage.FinancialYear.Code : "") </span></p>
+                                        <p class="strong"><span class="right-align">@{DateTime.Today.ToShortDateString();}  </span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="invoice-table">
+                            <div class="row">
+                                <div class="col s12 m12 l12">
+                                    <table class="highlight responsive-table">
+                                        <thead>
+                                            <tr>
+                                                <th data-field="no"></th>
+                                                <th data-field="item">Previous Certificate (KSH)</th>
+                                                <th data-field="uprice">This Certificate (KSH)</th>
+                                                <th data-field="price">Total (KSH)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>A. TOTAL WORK DONE</td>
+                                                <td>@Model.CertificateTotalWorkDonePrevious.ToString("N")</td>
+                                                <td>@Model.CertificateTotalWorkDoneThis.ToString("N")</td>
+                                                <td>@Model.CertificateTotalWorkDoneTotals.ToString("N")</td>
+                                            </tr>
+                                            <tr>
+                                                <td>B. MATERIAL ON SITE</td>
+                                                <td>@Model.CertificateMaterialOnSitePrevious.ToString("N")</td>
+                                                <td>@Model.CertificateMaterialOnSiteThis.ToString("N")</td>
+                                                <td>@Model.CertificateMaterialOnSiteTotals.ToString("N")</td>
+                                            </tr>
+                                            <tr>
+                                                <td>C. VARIATION OF PRICE</td>
+                                                <td>@Model.CertificateVariationOfPricePrevious.ToString("N")</td>
+                                                <td>@Model.CertificateVariationOfPriceThis.ToString("N")</td>
+                                                <td>@Model.CertificateVariationOfPriceTotals.ToString("N")</td>
+                                            </tr>
+
+                                            <tr class="#f5f5f5 grey lighten-4 strong black-text">
+                                                <td>D. SUB-TOTAL (A+B+C)</td>
+                                                <td>
+                                                    @{
+                                                        var totalPreviousRow = (Model.CertificateTotalWorkDonePrevious + Model.CertificateMaterialOnSitePrevious + Model.CertificateVariationOfPricePrevious);
+                                                    }
+                                                    @totalPreviousRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalThisRow = (Model.CertificateTotalWorkDoneThis + Model.CertificateMaterialOnSiteThis + Model.CertificateVariationOfPriceThis);
+                                                    }
+                                                    @totalThisRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalTotalsRow = (Model.CertificateTotalWorkDoneTotals + Model.CertificateMaterialOnSiteTotals + Model.CertificateVariationOfPriceTotals);
+                                                    }
+                                                    @totalTotalsRow.ToString("N")
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left:5%;">E. ADD V.A.T @@16%</td>
+                                                <td>
+                                                    @{
+                                                        var totalPreviousVATRow = ((Model.CertificateTotalWorkDonePrevious + Model.CertificateMaterialOnSitePrevious + Model.CertificateVariationOfPricePrevious) * Model.VAT) / 100;
+                                                    }
+                                                    @totalPreviousVATRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalThisVATRow = ((Model.CertificateTotalWorkDoneThis + Model.CertificateMaterialOnSiteThis + Model.CertificateVariationOfPriceThis) * Model.VAT) / 100;
+                                                    }
+                                                    @totalThisVATRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalTotalsVATRow = ((Model.CertificateTotalWorkDoneTotals + Model.CertificateMaterialOnSiteTotals + Model.CertificateVariationOfPriceTotals) * Model.VAT) / 100;
+                                                    }
+                                                    @totalTotalsVATRow.ToString("N")
+                                                </td>
+                                            </tr>
+                                            <tr class="#f5f5f5 grey lighten-4 strong black-text">
+                                                <td style="padding-left: 5%;">TOTAL VALUE OF WORK</td>
+                                                <td>
+                                                    @{
+                                                        var totalPreviousValueRow = ((Model.CertificateTotalWorkDonePrevious + Model.CertificateMaterialOnSitePrevious + Model.CertificateVariationOfPricePrevious) * (100 + Model.VAT)) / 100;
+                                                    }
+                                                    @totalPreviousValueRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalThisValueRow = ((Model.CertificateTotalWorkDoneThis + Model.CertificateMaterialOnSiteThis + Model.CertificateVariationOfPriceThis) * (100 + Model.VAT)) / 100;
+                                                    }
+                                                    @totalThisValueRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalTotalsValueRow = ((Model.CertificateTotalWorkDoneTotals + Model.CertificateMaterialOnSiteTotals + Model.CertificateVariationOfPriceTotals) * (100 + Model.VAT)) / 100;
+                                                    }
+                                                    @totalTotalsValueRow.ToString("N")
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left: 10%;">G. LESS 6% VAT</td>
+                                                <td>
+                                                    @{
+                                                        var totalPreviousLessVATRow = ((Model.CertificateTotalWorkDonePrevious + Model.CertificateMaterialOnSitePrevious + Model.CertificateVariationOfPricePrevious) * Model.LessVAT) / 100;
+                                                    }
+                                                    @totalPreviousLessVATRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalThisLessVATRow = ((Model.CertificateTotalWorkDoneThis + Model.CertificateMaterialOnSiteThis + Model.CertificateVariationOfPriceThis) * Model.LessVAT) / 100;
+                                                    }
+                                                    @totalThisLessVATRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalTotalsLessVATRow = ((Model.CertificateTotalWorkDoneTotals + Model.CertificateMaterialOnSiteTotals + Model.CertificateVariationOfPriceTotals) * Model.LessVAT) / 100;
+                                                    }
+                                                    @totalTotalsLessVATRow.ToString("N")
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left: 10%;">H. LESS 5% RETENTION</td>
+                                                <td>
+                                                    @{
+                                                        var totalPreviousLessRetentionRow = ((Model.CertificateTotalWorkDonePrevious + Model.CertificateMaterialOnSitePrevious + Model.CertificateVariationOfPricePrevious) * Model.Retention) / 100;
+                                                    }
+                                                    @totalPreviousLessRetentionRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalThisLessRetentionRow = ((Model.CertificateTotalWorkDoneThis + Model.CertificateMaterialOnSiteThis + Model.CertificateVariationOfPriceThis) * Model.Retention) / 100;
+                                                    }
+                                                    @totalThisLessRetentionRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalTotalsLessRetentionRow = ((Model.CertificateTotalWorkDoneTotals + Model.CertificateMaterialOnSiteTotals + Model.CertificateVariationOfPriceTotals) * Model.Retention) / 100;
+                                                    }
+                                                    @totalTotalsLessRetentionRow.ToString("N")
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left: 10%;">I. LESS 3% WITHHOLDING TAX</td>
+                                                <td>
+                                                    @{
+                                                        var totalPreviousLessWithholdingTaxRow = ((Model.CertificateTotalWorkDonePrevious + Model.CertificateMaterialOnSitePrevious + Model.CertificateVariationOfPricePrevious) * Model.WithholdingTax) / 100;
+                                                    }
+                                                    @totalPreviousLessWithholdingTaxRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalThisLessWithholdingTaxRow = ((Model.CertificateTotalWorkDoneThis + Model.CertificateMaterialOnSiteThis + Model.CertificateVariationOfPriceThis) * Model.WithholdingTax) / 100;
+                                                    }
+                                                    @totalThisLessWithholdingTaxRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalTotalsLessWithholdingTaxRow = ((Model.CertificateTotalWorkDoneTotals + Model.CertificateMaterialOnSiteTotals + Model.CertificateVariationOfPriceTotals) * Model.WithholdingTax) / 100;
+                                                    }
+                                                    @totalTotalsLessWithholdingTaxRow.ToString("N")
+                                                </td>
+                                            </tr>
+                                            <tr class="#f5f5f5 grey lighten-4 strong black-text">
+                                                <td style="padding-left: 10%;">J. CUMMULATIVE DEDUCTIONS</td>
+                                                <td>
+                                                    @{
+                                                        var totalPreviousCummulativeDeductionRow = (totalPreviousLessVATRow + totalPreviousLessRetentionRow + totalPreviousLessWithholdingTaxRow);
+                                                    }
+                                                    @totalPreviousCummulativeDeductionRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalThisCummulativeDeductionRow = (totalThisLessVATRow + totalThisLessRetentionRow + totalThisLessWithholdingTaxRow);
+                                                    }
+                                                    @totalThisCummulativeDeductionRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalTotalsCummulativeDeductionRow = (totalTotalsLessVATRow + totalTotalsLessRetentionRow + totalTotalsLessWithholdingTaxRow);
+                                                    }
+                                                    @totalTotalsCummulativeDeductionRow.ToString("N")
+                                                </td>
+                                            </tr>
+                                            <tr class="#f5f5f5 grey lighten-4 strong black-text">
+                                                <td style="padding-left: 10%;">K. TOTAL PAYMENTS</td>
+                                                <td>
+                                                    @{
+                                                        var totalPreviousTotalPaymentsRow = (totalPreviousValueRow - totalPreviousCummulativeDeductionRow);
+                                                    }
+                                                    @totalPreviousTotalPaymentsRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalThisTotalPaymentsRow = (totalThisValueRow - totalThisCummulativeDeductionRow);
+                                                    }
+                                                    @totalThisTotalPaymentsRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalTotalsTotalPaymentsRow = (totalTotalsValueRow - totalTotalsCummulativeDeductionRow);
+                                                    }
+                                                    @totalTotalsTotalPaymentsRow.ToString("N")
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left: 10%;">L. ADVANCE PAYMENT</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>-</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left: 10%;">M. RECOVERY OF ADVANCE</td>
+                                                <td>&nbsp;</td>
+                                                <td>&nbsp;</td>
+                                                <td>-</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="        padding-left: 10%;
+">
+                                                    N. BALANCE OF ADVANCE (K-L)
+                                                </td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <TD>-</TD>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left: 10%;">N. INTEREST ON LATE REPAYMENTS</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <TD>-</TD>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left: 10%;">O. LESS LIQUIDATED DAMAGES</td>
+                                                <td>-</td>
+                                                <td>-</td>
+                                                <TD>-</TD>
+                                            </tr>
+                                            <tr class="#f5f5f5 grey lighten-4 strong black-text">
+                                                <td style="padding-left: 10%;">P. NET PAYMENTS</td>
+                                                <td>
+                                                    @{
+                                                        var totalPreviousNetPaymentsRow = (totalPreviousValueRow - totalPreviousCummulativeDeductionRow);
+                                                    }
+                                                    @totalPreviousNetPaymentsRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalThisNetPaymentsRow = (totalThisValueRow - totalThisCummulativeDeductionRow);
+                                                    }
+                                                    @totalThisNetPaymentsRow.ToString("N")
+                                                </td>
+                                                <td>
+                                                    @{
+                                                        var totalTotalsNetPaymentsRow = (totalTotalsValueRow - totalTotalsCummulativeDeductionRow);
+                                                    }
+                                                    @totalTotalsNetPaymentsRow.ToString("N")
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>&nbsp;</td>
+                                                <td colspan="2" class="text-center">LESS PREVIOUS CERTIFICATES</td>
+                                                <td>
+                                                    @{
+                                                        var totalThisPreviousCertificaesRow = (totalTotalsNetPaymentsRow - totalThisNetPaymentsRow);
+                                                    }
+                                                    @totalThisPreviousCertificaesRow.ToString("N")
+                                                </td>
+                                            </tr>
+                                            <tr class="#f5f5f5 grey lighten-4 strong black-text">
+                                                <td>&nbsp;</td>
+                                                <td colspan="2" class="text-center">NOW DUE TO CONTRACTOR</td>
+                                                <td> @totalThisNetPaymentsRow.ToString("N")</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="invoice-footer">
+                            <div class="row">
+                                <div class="col s12">
+                                    <p class="strong">Submitted By</p>
+                                    <div class="row">
+                                        <div class="col s6">
+                                            <p><span>__________________________________________________________ </span></p>
+                                        </div>
+                                        <div class="col s6">
+                                            <p><span>Date .....................................</span></p>
+                                        </div>
+                                    </div>
+
+                                    <p class="strong">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contractor</p>
+                                    <p>I hereby confirm the above rates and quantities are correct.</p>
+                                    <br />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12">
+
+                                    <p class="strong">Checked By</p>
+                                    <div class="row">
+                                        <div class="col s6">
+                                            <p><span>___________________________________________ Date .......................... </span></p>
+                                            <p class="strong">&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Employer's Representative</p>
+                                        </div>
+                                        <div class="col s6">
+                                            <p><span> ___________________________________________ Date ..........................</span></p>
+                                            <p class="strong">&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;Engineer</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section vendorJS
+{
+    <script src="~/asset_default/app-assets/vendors/sweetalert/sweetalert.min.js" type="text/javascript"></script>
+    <script src="~/asset_default/app-assets/vendors/dropify/js/dropify.min.js" type="text/javascript"></script>
+    <script src="~/asset_default/app-assets/js/custom/jspdf.debug.js" type="text/javascript"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.js" type="text/javascript"></script>
+    <script src="~/asset_default/app-assets/js/scripts/form-file-uploads.js" type="text/javascript"></script>
+}
+
+@section scripts{
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        $(document).ready(function () {
+
+            $.ajax({
+                method: "POST",
+                url: "/UserManagement/GetShortName",
+                datatype: "json",
+                data: {}
+            })
+                .done(function (data) {
+                    //write json array object
+                    console.log(data);
+                    //Set Road Section ID to null
+
+                    $("#idSpan").text(data.sn);
+                    var Val1 = $("#idHomeAuthority").text();
+                    $("#idHomeAuthority").text(Val1 + "-" + data.authorityCode); $("#idGlobalAuthority").text(data.authorityName);
+                });
+        });
+
+        /* var pdf = new jsPDF('p', 'pt', 'letter');
+         pdf.html(document.body, {
+             callback: function (pdf) {
+                 var iframe = document.createElement('iframe');
+                 iframe.setAttribute('style', 'position:absolute;right:0; top:0; bottom:0; height:100%; width:500px');
+                 document.body.appendChild(iframe);
+                 iframe.src = pdf.output('datauristring');
+             }
+         });*/
+
+        //Generate PDF
+        var pdf, page_section, HTML_Width = 0, HTML_Height = 0, top_left_margin = 0, PDF_Width = 0, PDF_Height = 0, canvas_image_width = 0, canvas_image_height = 0;
+
+        var generatePDF = function () {
+            $("#downloadbtn").hide();
+            $("#genmsg").show();
+            var container = document.getElementById("invoice-print");
+            pdf = "";
+            html2canvas(container, { allowTaint: true, removeContainer: false }).then(function (canvas) {
+
+                calculatePDF_height_width(".print-wrap", 0);
+                var imgData = canvas.toDataURL("image/png", 1.0);
+                pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
+                pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, HTML_Width, HTML_Height);
+
+                setTimeout(function () {
+
+                    //Save PDF Doc
+                    pdf.save("HTML-Document.pdf");
+
+                    //Generate BLOB object
+                    var blob = pdf.output("blob");
+
+                    //Getting URL of blob object
+                    var blobURL = URL.createObjectURL(blob);
+
+                    //Setting download link
+                    //var downloadLink = document.getElementById('pdf-download-link');
+                    //downloadLink.href = blobURL;
+
+                }, 0);
+                $("#downloadbtn").show();
+                $("#genmsg").hide();
+            });
+        }
+
+        var calculatePDF_height_width = function (selector, index) {
+            page_section = $(selector).eq(index);
+            HTML_Width = page_section.width();
+            HTML_Height = page_section.height();
+            top_left_margin = 15;
+            PDF_Width = HTML_Width + (top_left_margin * 2);
+            PDF_Height = (PDF_Width * 1.2) + (top_left_margin * 2);
+            canvas_image_width = HTML_Width;
+            canvas_image_height = HTML_Height;
+        }
+
+    </script>
+
+}

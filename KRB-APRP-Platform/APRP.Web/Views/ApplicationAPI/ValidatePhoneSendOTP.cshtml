@@ -1,0 +1,105 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model APRP.Web.Models.UserViewModels.ValidatePhoneSendOTP
+@{
+    Layout = "/Views/Shared/_LayoutSignIn_UI_v3.cshtml";
+}
+
+<div class="row w-100 mx-0">
+    <div class="col-lg-4 mx-auto prompt__logo--bar">
+        <div class="auth-form-light text-center py-5 px-4 px-sm-5">
+            <div class="brand-logo">
+                <img src="~/ui_v3/images/log.png" alt="logo">
+            </div>
+            <h5>APRP System</h5>
+            <h6 class="font-weight-light">Please complete to create your account.</h6>
+            <form class="pt-3" id="frmSignUpIndividual" method="POST">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="mdi mdi-phone "></i></span>
+                        </div>
+                        <input asp-for="phone" type="text" class="form-control" placeholder="Mobile No." aria-label="Mobile No.">
+                    </div>
+                    <div>
+                        <span asp-validation-for="phone" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="mdi mdi mdi-account-key"></i></span>
+                        </div>
+                        <input asp-for="email" type="text" class="form-control" placeholder="Email" aria-label="Email">
+                    </div>
+                    <div>
+                        <span asp-validation-for="email" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="my-2 d-flex justify-content-between align-items-center">
+                    <div class="form-check-secondary">
+                        <label class="form-check-label text-muted">
+                            <input asp-for="sendOTPtoEmail" type="checkbox" class="form-check-input">
+                            Send OTP to Email
+                        </label>
+                    </div>
+                    <a href="/Identity/Account/ForgotPassword" class="auth-link text-black">Forgot Password</a>
+                </div>
+
+                <div class="mt-3 d-flex justify-content-between align-items-center">
+                    <div class="form-check-secondary">
+                        <label class="form-check-label text-muted">
+                            <input id="terms" type="checkbox" class="form-check-input">
+                            I agree to the <a rel="modal:open" href="~/html/Terms of Use -a.html">
+                                terms and conditionss
+                            </a>
+                        </label>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <a id="idSignUpIndividual" class="btn btn-block btn-success btn-lg font-weight-medium auth-form-btn">Register</a>
+                </div>
+                <div class="text-center mt-4 font-weight-light">
+                    Do you have an account? <a asp-controller="Home" asp-action="SignIn" class="text-primary">Click here to login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        //Call function to load data
+
+        $(document).ready(function() {
+
+            //disable the sign-up button by default
+            //$('#idSignUpIndividual').prop('disabled', true);
+
+            $('#terms').change(function() {
+                if (this.checked) {
+                    //Am checked
+                    console.log("Am checked");
+                    //enable sign-up button
+                    //$('#idSignUpIndividual').prop('disabled', false);
+                    $('#idSignUpIndividual').click(function() {
+                        document.getElementById('frmSignUpIndividual').submit();
+                    });
+
+                } else {
+                    //Am unchecked
+                    console.log("I have been checked off");
+                    //disable submit button
+                    //$('#idSignUpIndividual').prop('disabled', true);
+
+                    //Dewire click event to a link
+                    $("#idSignUpIndividual").off("click");
+                }
+            });
+        });
+    </script>
+
+}

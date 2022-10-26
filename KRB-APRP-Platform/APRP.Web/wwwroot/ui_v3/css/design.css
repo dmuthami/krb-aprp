@@ -1,0 +1,72 @@
+.navbar .navbar-brand-ulizi {
+    background: #2a8f3f;
+    border-bottom: 1px solid #e3e3e3;
+    transition: width 0.25s ease, background 0.25s ease;
+    -webkit-transition: width 0.25s ease, background 0.25s ease;
+    -moz-transition: width 0.25s ease, background 0.25s ease;
+    -ms-transition: width 0.25s ease, background 0.25s ease;
+    width: 257px;
+    height: 60px;
+    border-right: 1px solid #2a8f3f;
+}
+
+.btn-weka {
+    color: #ffffff;
+    background-color: #2a8f3f;
+    border-color: #ffffff;
+    width: 150px;
+    height: 40px;
+}
+
+.btn-badilika {
+    color: #000000;
+    background-color: #ffffff;
+    border-color: #ffffff;
+    width: 150px;
+    height: 40px;
+}
+
+.navbar .navbar-menu-wrapper-ulizi {
+    background: #2A8F3F;
+    transition: width 0.25s ease;
+    -webkit-transition: width 0.25s ease;
+    -moz-transition: width 0.25s ease;
+    -ms-transition: width 0.25s ease;
+    color: #2a8f3f;
+    padding-left: 0rem;
+    padding-right: 1.062rem;
+    width: calc(100% - 0px);
+    height: 60px;
+    border-bottom: 1px solid #e3e3e3;
+}
+
+.form-check-input {
+    position: absolute;
+    margin-top: 0.3rem;
+    margin-left: -1.25rem;
+
+}
+
+.prompt__logo--bar{
+    padding:0px;
+    background:none;
+    border-top:4px solid #e8ac53;
+    animation:none;
+}
+
+/*.form-check .form-check-label {*/
+/*    min-height: 18px;*/
+/*    display: block;*/
+/*    margin-left: 5.75rem;*/
+/*    font-size: 0.875rem;*/
+/*    line-height: 1.5;*/
+/*}*/
+
+.btn-success{
+    color: #ffffff;
+}
+
+.btn-warning {
+    color: #ffffff;
+}
+

@@ -1,0 +1,33 @@
+﻿@model APRP.Web.ViewModels.ApplicationUserViewModel
+
+<table class="subscription-table responsive-table striped" id="page-length-option2">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ApplicationRoles)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    <a onclick="ShowinPopUp('@Url.Action("AddRemoveUserToGroup","Permissions", new { RoleId=item.Id,UserId=Model.ApplicationUser.Id,Add=true },Context.Request.Scheme)','Add User To Group')">
+                        <i class="material-icons pink-text">add_box</i>
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

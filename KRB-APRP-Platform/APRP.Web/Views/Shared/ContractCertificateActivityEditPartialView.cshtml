@@ -1,0 +1,42 @@
+﻿@model APRP.Web.Domain.Models.PaymentCertificateActivity
+
+
+@{
+    <h5>Set item activity quantity for the certificate</h5>
+}
+<form id="CertificateActivityForm">
+    @Html.HiddenFor(m => m.ID)
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.PlanActivity.ItemActivityUnitCost.UnitDescription, new { @readonly = "readonly" })
+            @Html.LabelFor(m => m.PlanActivity.ItemActivityUnitCost.UnitDescription, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.PlanActivity.ItemActivityUnitCost.UnitMeasure, new { @readonly = "readonly" })
+            @Html.LabelFor(m => m.PlanActivity.ItemActivityUnitCost.UnitMeasure, new { @class = "active" })
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.PlanActivity.PackageQuantity, new { @readonly = "readonly" })
+            @Html.LabelFor(m => m.PlanActivity.PackageQuantity, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.Quantity, new { @class = "validate active" })
+            @Html.LabelFor(m => m.Quantity, new { @class = "active" })
+        </div>
+    </div>
+</form>
+
+
+
+<script type="text/javascript">
+
+    
+
+</script>

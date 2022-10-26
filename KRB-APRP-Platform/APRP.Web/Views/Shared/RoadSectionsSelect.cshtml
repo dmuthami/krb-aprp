@@ -1,0 +1,161 @@
+﻿@model IEnumerable<APRP.Web.Domain.Models.RoadSection>
+
+<div class="divider"></div>
+<h5 class="card-title">Planned Road Links On Selected Road</h5>
+
+<table id="data-table-section-planned" class="display">
+    <thead class="tbl-header">
+        <tr>
+            <th>Section Name</th>
+            <th>Start Chainage</th>
+            <th>End Chainage</th>
+            <th>Length</th>
+            <th>Surface Type</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model.Any() && Model != null)
+        {
+            @foreach (var roadSection in Model.Where(p => p.RoadWorkSectionPlan != null).OrderBy(i => i.ID))
+            {
+                <tr>
+                    <td>@roadSection.SectionName</td>
+                    <td>@roadSection.StartChainage.ToString("N")</td>
+                    <td>@roadSection.EndChainage.ToString("N")</td>
+                    <td>@roadSection.Length.ToString("N")</td>
+                    <td>@roadSection.SurfaceType.Code</td>
+                    <td class="center-align">
+                        <a class="tooltipped" data-position="right" data-tooltip="Select Section to view" asp-controller="workplan" asp-action="GetRoadWorkPlanActivities" asp-route-roadWorkSectionId="@roadSection.RoadWorkSectionPlan.ID">View Plan</a>
+                    </td>
+                </tr>
+
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6"> <span>There are no sections planned.</span></td>
+            </tr>
+        }
+    </tbody>
+</table>
+<br />
+<div class="divider"></div>
+<br />
+<h5 class="card-title">Unplanned Road Links On Selected Road</h5>
+<table id="data-table-sections" class="display">
+    <thead>
+        <tr>
+            <th>Section Name</th>
+            <th>Start Chainage</th>
+            <th>End Chainage</th>
+            <th>Length</th>
+            <th>Surface Type</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model.Any() && Model != null)
+        {
+            @foreach (var roadSection in Model.Where(p => p.RoadWorkSectionPlan == null).OrderBy(i => i.ID))
+            {
+                <tr>
+                    <td>@roadSection.SectionName</td>
+                    <td>@roadSection.StartChainage.ToString("N")</td>
+                    <td>@roadSection.EndChainage.ToString("N")</td>
+                    <td>@roadSection.Length.ToString("N")</td>
+                    <td>@roadSection.SurfaceType.Code</td>
+                    <td class="center-align">
+                        <a class="tooltipped" data-position="right" data-tooltip="Select Section to plan" href="#!" onclick="GetPlanUpdate(@roadSection.ID,'NEW')">Plan Road Link</a> &nbsp;
+                    </td>
+                </tr>
+
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6"> <span>There are no sections available for planning.</span></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        //Set datatable formatting
+        "use strict";
+
+        $('select').formSelect();
+        /*
+            * DataTables - Tables
+            */
+        var calcDataTableHeight = function () {
+            return $(window).height() - 175 + "px";
+        };
+
+
+
+        var tablePlanned = $("#data-table-section-planned").DataTable({
+            sScrollY: calcDataTableHeight(),
+            scrollCollapse: true,
+            paging: true,
+            searching: false,
+            //  responsive: true,
+            lengthMenu: [5],
+            "bLengthChange": false,
+            "bFilter": true,
+            "bInfo": false,
+            aoColumns: [
+                null,
+                {
+                    bSortable: false
+                },
+                {
+                    bSortable: false
+                },
+                {
+                    bSortable: false
+                },
+                null,
+                {
+                    bSortable: false
+                }
+            ]
+        });
+
+        var table = $("#data-table-sections").DataTable({
+            sScrollY: calcDataTableHeight(),
+            scrollCollapse: true,
+            paging: true,
+            searching: false,
+            // responsive: true,
+            lengthMenu: [5],
+            "bLengthChange": false,
+            "bFilter": true,
+            "bInfo": false,
+            aoColumns: [
+                null,
+                {
+                    bSortable: false
+                },
+                {
+                    bSortable: false
+                },
+                {
+                    bSortable: false
+                },
+                null,
+                {
+                    bSortable: false
+                }
+            ]
+        });
+    });
+
+</script>

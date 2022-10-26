@@ -1,0 +1,76 @@
+﻿@model APRP.Web.ViewModels.WorkpackageContractorSelectList
+
+<p class="caption">
+    Please select contractor for the project
+</p>
+<table id="data-table-unit-activities-select" class="striped display">
+    <thead>
+        <tr class="grey black-text">
+            <th>KRA PIN</th>
+            <th>Name</th>
+            <th>Address</th>
+            <th>Contacts</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @if (Model.Contractors.Any() && Model.Contractors != null)
+        {
+            @foreach (var contractor in Model.Contractors.OrderBy(i=>i.ID))
+            {
+                <tr>
+                    <td>@contractor.KRAPin</td>
+                    <td>@contractor.Name</td>
+                    <td>@contractor.POBox</td>
+                    <td>@contractor.Telephone</td>
+
+                    <td class="center-align">
+                        <a class="tooltipped" data-position="right" data-tooltip="Select Contractor" href="#!" onclick="SetWorkPackageContractor(@contractor.ID, @Model.contractId)"><i class="material-icons pink-text">play_arrow</i></a> &nbsp;
+                    </td>
+                </tr>
+
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="5"> <span>There are not contractors defined in the system, please contact the system administrator</span></td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script type="text/javascript">
+
+    var SetWorkPackageContractor = function (contractorId, contractId) {
+        $.ajax(
+            {
+                type: "POST",
+                url: "/WorkPlanPackage/EditPackageContractorDetails",
+                data: {
+                    contractorId: contractorId,
+                    contractId: contractId
+                },
+                success: function (data) {
+                    if (data.success) {
+                        swal({
+                            title: "Success",
+                            text: "Contractor details updated successfully!",
+                            timer: 1500,
+                            icon: "success",
+                            buttons: false
+                        }).then(function () {
+                            window.location.href = data.href;
+                        });
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Cancelled',
+                            icon: "error",
+                        });
+                    }
+                }
+            }
+        );
+    }
+</script>

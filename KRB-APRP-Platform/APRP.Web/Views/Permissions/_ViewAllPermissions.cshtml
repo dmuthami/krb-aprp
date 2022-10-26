@@ -1,0 +1,28 @@
+﻿@model APRP.Web.ViewModels.ApplicationRoleViewModel
+
+<table class="subscription-table responsive-table striped" id="page-length-option">
+    <thead>
+        <tr>
+            <th>
+                Permission
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.AllPermissions)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item)
+                </td>
+                <td>
+                    <a onclick="ShowinPopUp('@Url.Action("AddPermissionFromRole","Permissions", new { Claim = item,RoleId=Model.ApplicationRole.Id},Context.Request.Scheme)','Add Permission To Role')">
+                        <i class="material-icons pink-text">create_new_folder</i>
+                    </a>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

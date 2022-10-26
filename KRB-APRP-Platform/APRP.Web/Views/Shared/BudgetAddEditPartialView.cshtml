@@ -1,0 +1,68 @@
+﻿@model APRP.Web.Domain.Models.BudgetCeiling
+
+
+@{
+    if (Model.ID > 0)
+    {
+        <h5>Edit Budget Ceiling for : @Model.Authority.Name</h5>
+    }
+    else
+    {
+        <h5>Set New Plan Road Section</h5>
+    }
+
+}
+
+<form id="BudgetCeilingForm">
+    @Html.HiddenFor(m => m.ID)
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.Amount,  new { @class = "validate active" })
+            @Html.LabelFor(m => m.Amount, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.AdditionalInfo,  new { @class = "validate active" })
+            @Html.LabelFor(m => m.AdditionalInfo, new { @class = "active" })
+        </div>
+    </div>
+
+
+
+</form>
+
+<script type="text/javascript">
+
+    //submit the form saving : UpdatePlanActivity
+    var SaveBudgetRecord = function () {
+        var sendForm = $("#BudgetCeilingForm").serialize();
+
+        $.ajax(
+            {
+                type: "POST",
+                url: "/Workplan/GetBudgetCeilingAddEdit",
+                data: sendForm,
+                success: function (data) {
+                    if (data.success) {
+                        $("#modalViewId").modal('close');
+                        window.location.href = data.href;
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Error Occured',
+                            icon: "error",
+                        });
+                    }
+                }
+
+            }
+        );
+    }
+
+    $(document).ready(function () {
+      //  $('select').formSelect();
+    });
+
+
+</script>

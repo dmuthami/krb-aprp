@@ -1,0 +1,144 @@
+﻿@model APRP.Web.Domain.Models.RoadWorkSectionPlan
+
+
+@{
+    if (Model.ID > 0)
+    {
+        <h5>Edit Plan Road Section for : @Model.RoadSection.SectionName</h5>
+    }
+    else
+    {
+        <h5>Set New Plan Road Section for : @Model.RoadSection.SectionName </h5>
+    }
+
+}
+
+<form id="sectionWorkplanForm">
+    @Html.HiddenFor(m => m.ID)
+    @Html.HiddenFor(m => m.RoadSection.ID)
+    @Html.HiddenFor(m => m.RoadSectionId)
+
+    @if (ViewBag.FlagNew != "EDIT-ACHIEVED-KM")
+    {
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                @Html.DropDownListFor(m => m.FundingSourceId, ViewBag.FundingSourceList as SelectList, "Please Fund Source")
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                @Html.DropDownListFor(m => m.FundTypeId, ViewBag.FundTypeList as SelectList, "Please Fund Type")
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                @Html.DropDownListFor(m => m.WorkCategoryId, ViewBag.WorkCategoryList as SelectList, "Please Work Category")
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                @Html.DropDownListFor(m => m.ExecutionMethodId, ViewBag.ExecutionMethodList as SelectList, "Please Execution Method")
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                <label>
+                    <input id="RevisionStatus" name="RevisionStatus" type="checkbox" value="true" />
+                    <span>Revision Status</span>
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                <label>
+                    <input id="ApprovalStatus" name="ApprovalStatus" type="checkbox" value="true" />
+                    <span>Approval Status</span>
+                </label>
+            </div>
+        </div>
+        <br />
+        <br />
+    }
+    else
+    {
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                @Html.DropDownListFor(m => m.FundingSourceId, ViewBag.FundingSourceList as SelectList, "Please Fund Source", new { @disabled = "disabled" })
+                @Html.HiddenFor(m => m.FundingSourceId)
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                @Html.DropDownListFor(m => m.FundTypeId, ViewBag.FundTypeList as SelectList, "Please Fund Type", new { @disabled = "disabled" })
+                @Html.HiddenFor(m => m.FundTypeId)
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                @Html.DropDownListFor(m => m.WorkCategoryId, ViewBag.WorkCategoryList as SelectList, "Please Work Category", new { @disabled = "disabled" })
+                @Html.HiddenFor(m => m.WorkCategoryId)
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                @Html.DropDownListFor(m => m.ExecutionMethodId, ViewBag.ExecutionMethodList as SelectList, "Please Execution Method", new { @disabled = "disabled" })
+                @Html.HiddenFor(m => m.ExecutionMethodId)
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col s8 offset-s2">
+            @if (ViewBag.FlagNew == "EDIT-ACHIEVED-KM")
+            {
+                <div class="row">
+                    <div class="input-field col s4 ">
+                        @Html.TextBoxFor(m => m.RoadSection.Length, new { @readonly = "readonly", @class = "active" })
+                        @Html.LabelFor(m => m.RoadSection.Length, new { @class = "active" })
+                    </div>
+                    <div class="input-field col s4">
+                        @Html.TextBoxFor(m => m.PlannedLength, new { @readonly = "readonly", @class = "active" })
+                        @Html.LabelFor(m => m.PlannedLength, new { @class = "active" })
+                    </div>
+
+                    <div class="input-field col s4">
+                        @Html.TextBoxFor(m => m.AchievedLength, new { @class = "active validate " })
+                        @Html.LabelFor(m => m.AchievedLength, new { @class = "active" })
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    <div class="input-field col s4 ">
+                        @Html.TextBoxFor(m => m.RoadSection.Length, new { @readonly = "readonly", @class = "active" })
+                        @Html.LabelFor(m => m.RoadSection.Length, new { @class = "active" })
+                    </div>
+                    <div class="input-field col s4">
+                        @Html.TextBoxFor(m => m.PlannedLength, new { @class = "active validate " })
+                        @Html.LabelFor(m => m.PlannedLength, new { @class = "active" })
+                    </div>
+                    <div class="input-field col s4">
+                        @Html.TextBoxFor(m => m.AchievedLength, new { @readonly = "readonly", @class = "active " })
+                        @Html.LabelFor(m => m.AchievedLength, new { @class = "active" })
+                    </div>
+                </div>
+            }
+
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.TotalEstimateCost, new { @readonly = "readonly", @class = "active" })
+            @Html.LabelFor(m => m.TotalEstimateCost, new { @class = "active" })
+        </div>
+    </div>
+
+
+</form>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('select').formSelect();
+    });
+</script>

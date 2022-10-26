@@ -1,0 +1,39 @@
+﻿@page
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "Confirm email";
+    Layout = "~/Views/Shared/_LayoutHome_ui_v1.cshtml";
+}
+
+<div class="col s12">
+    <div class="container">
+        <div id="login-page" class="row">
+            <div class="col s12 m6 l4 z-depth-4 card-panel border-radius-6 login-card bg-opacity-8">
+                <form id="frmLogin" class="login-form" method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <div class="card-content white-text center">
+                                <img src="~/asset_default/app-assets/images/logo/login-logo.png" class="responsive-img" alt="Materialize">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="register-page" class="mt-3">
+                        <div class="col s12 z-depth-4 card-panel border-radius-6 register-card bg-opacity-8">
+                            <input asp-for="StatusMessage" type="text" readonly />
+                            @*<partial name="_StatusMessage" model="Model.StatusMessage" />*@
+                            <a class="btn btn-block btn-success btn-lg font-weight-medium auth-form-btn" asp-page="/UserDashboard/Dashboard">Sign In </a>.
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section CSS {
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/css/pages/login.css">
+}

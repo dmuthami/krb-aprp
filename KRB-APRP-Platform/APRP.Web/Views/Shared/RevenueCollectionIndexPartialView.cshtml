@@ -1,0 +1,1342 @@
+﻿@model APRP.Web.ViewModels.RevenueCollectionViewModel;
+
+@{
+    Layout = null;
+}
+
+
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        RECEIPTS
+                    </h4>
+                    @*<a class="btn btn-warning btn-sm" asp-page="/RevenueCollectionRx/Create">Add Revenue Collection Item</a>*@
+                    <div class="row">
+                        <div class="col s12">
+                            <table id="idRevenueCollection" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.RevenueCollection[0].RevenueCollectionCodeUnit)
+                                        </th>
+                                        <th>
+
+                                            @Html.DisplayNameFor(model => model.RevenueCollection[0].Amount) <text>(Kshs)</text>
+                                        </th>
+                                        @*<th>
+                                                Allocate/Deallocate
+                                            </th>*@
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (Model.RevenueCollection != null)
+                                    {
+                                        foreach (var item in Model.RevenueCollection)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.RevenueCollectionCodeUnit.RevenueStream)
+                                                </td>
+                                                <td>
+                                                    @String.Format("{0:0,0.00}", item.Amount)
+                                                </td>
+                                                @*<td>
+                                                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.RevenueCollection.Delete")).Succeeded)
+                                                        {
+                                                            <button type="button" data-dismiss="modal"
+                                                                    data-id="@item.ID"
+                                                                    class="btn btn-warning btn-sm">
+                                                                Remove
+                                                            </button>
+                                                        }
+                                                    </td>*@
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+
+                                <tfoot>
+                                    <tr>
+                                        <td>
+                                            TOTAL FUNDS AVAILABLE
+                                        </td>
+                                        <td>
+                                            @{
+                                                double TotalFundsAvailable = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    TotalFundsAvailable = @Model.CeilingsEstimateViewModel.TotalFundsAvailable;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", TotalFundsAvailable)
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Disbursement-->
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        DISBURSEMENTS
+                    </h4>
+                    <div class="row">
+                        <div class="col s12">
+                            <table id="idDisbursements" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Percent</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>KRB Operations</td>
+                                        <td>2.0%</td>
+                                        <td>
+                                            @{
+                                                double KRBOperations = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KRBOperations = @Model.CeilingsEstimateViewModel.KRBOperations;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KRBOperations)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td> KRB: 2% Transit Tolls</td>
+                                        <td>2.0%</td>
+                                        <td>
+                                            @{
+                                                double KRBTransitTrolls = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KRBTransitTrolls = @Model.CeilingsEstimateViewModel.KRBTransitTrolls;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KRBTransitTrolls)
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td>KRB OPERATIONS TOTAL</td>
+                                        <td>
+                                            @{
+                                                double KRBTotalOperations = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KRBTotalOperations = @Model.CeilingsEstimateViewModel.KRBTotalOperations;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KRBTotalOperations)
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        NET Funds available after administration costs
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            <table id="idNetFunds" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Percent</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>(i)Road Agencies-Fuel Levy </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double Road_Agencies_Fuel_Levy = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    Road_Agencies_Fuel_Levy = @Model.CeilingsEstimateViewModel.Road_Agencies_Fuel_Levy;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", Road_Agencies_Fuel_Levy)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>(ii)Road Annuity Fund</td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double Road_Annuity_Fund = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    Road_Annuity_Fund = @Model.CeilingsEstimateViewModel.Road_Annuity_Fund;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", Road_Annuity_Fund)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sub-total Fuel Levy</td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double SubTotal_Fuel_Levy = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    SubTotal_Fuel_Levy = @Model.CeilingsEstimateViewModel.SubTotal_Fuel_Levy;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", SubTotal_Fuel_Levy)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>(iii)Transit Tolls </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double NetTransitTolls = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    NetTransitTolls = @Model.CeilingsEstimateViewModel.NetTransitTolls;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", NetTransitTolls)
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td>
+                                            TOTAL Funds For Allocation
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double TOTALFundsForAllocation = 0d;
+
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    TOTALFundsForAllocation = @Model.CeilingsEstimateViewModel.TOTALFundsForAllocation;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", TOTALFundsForAllocation)
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Fund Allocation-->
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        FUND ALLOCATION
+                    </h4>
+                    <div class="row">
+                        <div class="col s12">
+                            <table id="idFundAlloc" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Percent</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            RMLF LESS RAF
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @String.Format("{0:0,0.00}", @Model.CeilingsEstimateViewModel.RMLFLessRAF)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Road Annuity Fund
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @String.Format("{0:0,0.00}", Road_Annuity_Fund)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            County Allocation
+                                        </td>
+                                        <td>15.0%</td>
+                                        <td>
+                                            @{
+                                                double CountyAllocation = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    CountyAllocation = @Model.CeilingsEstimateViewModel.CountyAllocation;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", CountyAllocation)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            KeNHA
+                                        </td>
+                                        <td>40.0%</td>
+                                        <td>
+                                            @{
+                                                double kenhaAllocation = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    kenhaAllocation = @Model.CeilingsEstimateViewModel.kenhaAllocation;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", kenhaAllocation)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Transit Tolls
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @String.Format("{0:0,0.00}", NetTransitTolls)
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <br />
+                    <!--Authorities-->
+                    <h4 class="card-title">
+                        ALLOCATION per RA
+                    </h4>
+                    <div class="row">
+                        <div class="col s12">
+                            <table id="idNetFunds" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Percent</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            KeNHA TOTAL
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double kenhaTotal = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    kenhaTotal = @Model.CeilingsEstimateViewModel.kenhaTotal;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", kenhaTotal)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            KRB Board/CS Allocation
+                                        </td>
+                                        <td>10.0%</td>
+                                        <td>
+                                            @{
+                                                double KRBBoard_CSAllocation = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KRBBoard_CSAllocation = @Model.CeilingsEstimateViewModel.KRBBoard_CSAllocation;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KRBBoard_CSAllocation)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            National Park Roads (KWS)
+                                        </td>
+                                        <td>1.0%</td>
+                                        <td>
+                                            @{
+                                                double KWSAllocation = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KWSAllocation = @Model.CeilingsEstimateViewModel.KWSAllocation;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KWSAllocation)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Rural Roads (KeRRA)
+                                        </td>
+                                        <td>21.8%</td>
+                                        <td>
+                                            @{
+                                                double KERRAAllocation = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KERRAAllocation = @Model.CeilingsEstimateViewModel.KERRAAllocation;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KERRAAllocation)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Urban Roads (KURA)
+                                        </td>
+                                        <td>10.2%</td>
+                                        <td>
+                                            @{
+                                                double KURAAllocation = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KURAAllocation = @Model.CeilingsEstimateViewModel.KURAAllocation;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KURAAllocation)
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td>
+                                            Sub-TOTAL- Funds Allocated
+                                        </td>
+                                        <td>
+                                            @{
+                                                double SubtotalFundsAllocated = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    SubtotalFundsAllocated = @Model.CeilingsEstimateViewModel.SubtotalFundsAllocated;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", SubtotalFundsAllocated)
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <br />
+                    <!--Gross RLMF-->
+                    <div class="row">
+                        <div class="col s12">
+                            <table id="idNetFunds" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Percent</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td>
+                                            Gross RMLF
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double GrossRMLF = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    GrossRMLF = @Model.CeilingsEstimateViewModel.GrossRMLF;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", GrossRMLF)
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <br />
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Fund Allocation-->
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <!--Admin Operations-->
+                    <h4 class="card-title">
+                        Admin Operations Computations
+                    </h4>
+                    <div class="row">
+                        <div class="col s12">
+                            <table id="idAdminOperations" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Percent</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            KURA(Caping Amount = 1,892,000,000)
+                                        </td>
+                                        <td>5.5%</td>
+                                        <td>
+                                            @{
+                                                double KURAAdminOperations = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KURAAdminOperations = @Model.CeilingsEstimateViewModel.KURAAdminOperations;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KURAAdminOperations)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            KeRRA
+                                        </td>
+                                        <td>5.5%</td>
+                                        <td>
+                                            @{
+                                                double KERRAAdminOperations = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KERRAAdminOperations = @Model.CeilingsEstimateViewModel.KERRAAdminOperations;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KERRAAdminOperations)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            KeNHA
+                                        </td>
+                                        <td>4.0%</td>
+                                        <td>
+                                            @{
+                                                double kenhaAdminOperations = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    kenhaAdminOperations = @Model.CeilingsEstimateViewModel.kenhaAdminOperations;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", kenhaAdminOperations)
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <br />
+
+                    <!--Kerra Computations-->
+                    <h4 class="card-title">
+                        KERRA Computations
+                    </h4>
+                    <div class="row">
+                        <div class="col s12">
+                            <table id="idKerraComputations" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Percent</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            Total allocation to KeRRA
+                                        </td>
+                                        <td>21.8%</td>
+                                        <td>
+                                            @String.Format("{0:0,0.00}", KERRAAllocation)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Constituency allocation(22/32 of KeRRA alloc)
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double KERRAConstituencyAllocation = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KERRAConstituencyAllocation = @Model.CeilingsEstimateViewModel.KERRAConstituencyAllocation;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KERRAConstituencyAllocation)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Critical Links allocation(10/32 of KeRRA alloc.
+
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double KERRACriticalLinksAllocation = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KERRACriticalLinksAllocation = @Model.CeilingsEstimateViewModel.KERRACriticalLinksAllocation;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KERRACriticalLinksAllocation)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Total admin budget(5.5% of RMLF)
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double KERRATotalAdminBudget = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KERRATotalAdminBudget = @Model.CeilingsEstimateViewModel.KERRATotalAdminBudget;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KERRATotalAdminBudget)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            22% portion admin(22/32)
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double KERRAPortinAdminTwentyTwoPercent = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KERRAPortinAdminTwentyTwoPercent = @Model.CeilingsEstimateViewModel.KERRAPortinAdminTwentyTwoPercent;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KERRAPortinAdminTwentyTwoPercent)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            10% portion admin(10/32)
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double KERRAPortinAdminTenPercent = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KERRAPortinAdminTenPercent = @Model.CeilingsEstimateViewModel.KERRAPortinAdminTenPercent;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KERRAPortinAdminTenPercent)
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            22% portion road works
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double KERRAPortinRoadWorksTwentyTwoPercent = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KERRAPortinRoadWorksTwentyTwoPercent = @Model.CeilingsEstimateViewModel.KERRAPortinRoadWorksTwentyTwoPercent;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KERRAPortinRoadWorksTwentyTwoPercent)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            10% portion road works
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double KERRAPortinRoadworksTenPercent = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KERRAPortinRoadworksTenPercent = @Model.CeilingsEstimateViewModel.KERRAPortinRoadworksTenPercent;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KERRAPortinRoadworksTenPercent)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            22% alloc. /Constituency
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double KERRATwentyTwoPercentAllocPerConstituency = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KERRATwentyTwoPercentAllocPerConstituency = @Model.CeilingsEstimateViewModel.KERRATwentyTwoPercentAllocPerConstituency;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KERRATwentyTwoPercentAllocPerConstituency)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            10% alloc. /Constituency
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double KERRATenPercentAllocPerConstituency = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KERRATenPercentAllocPerConstituency = @Model.CeilingsEstimateViewModel.KERRATenPercentAllocPerConstituency;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KERRATenPercentAllocPerConstituency)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Total Alloc. /Constituency
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double KERRATotalAllocPerConstituency = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KERRATotalAllocPerConstituency = @Model.CeilingsEstimateViewModel.KERRATotalAllocPerConstituency;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KERRATotalAllocPerConstituency)
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <br />
+
+                    <!--Kenha Computations-->
+                    <!--Kerra Computations-->
+                    <h4 class="card-title">
+                        KENHA Computations
+                    </h4>
+                    <div class="row">
+                        <div class="col s12">
+                            <table id="idKerraComputations" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Percent</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            40% RMLF
+                                        </td>
+                                        <td>40.0%</td>
+                                        <td>
+                                            @String.Format("{0:0,0.00}", kenhaAllocation)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Transit Toll
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @String.Format("{0:0,0.00}", NetTransitTolls)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Total allocation to KeNHA
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @String.Format("{0:0,0.00}", kenhaTotal)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Admin & Operations
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @String.Format("{0:0,0.00}", kenhaAdminOperations)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Roadworks
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double kenhaRoadWorks = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    kenhaRoadWorks = @Model.CeilingsEstimateViewModel.kenhaRoadWorks;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", kenhaRoadWorks)
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <br />
+
+                    <!--Kura Computations-->
+                    <h4 class="card-title">
+                        KURA Computations
+                    </h4>
+                    <div class="row">
+                        <div class="col s12">
+                            <table id="idKuraComputations" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Percent</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            10.2% RMLF
+                                        </td>
+                                        <td>10.2%</td>
+                                        <td>
+                                            @String.Format("{0:0,0.00}", KURAAllocation)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Admin & Operations
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @String.Format("{0:0,0.00}", KURAAdminOperations)
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Roadworks
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            @{
+                                                double KURARoadWorks = 0d;
+                                                if (@Model.CeilingsEstimateViewModel != null)
+                                                {
+                                                    KURARoadWorks = @Model.CeilingsEstimateViewModel.KURARoadWorks;
+                                                }
+                                            }
+                                            @String.Format("{0:0,0.00}", KURARoadWorks)
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <br />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Budget Uploads
+                    </h4>
+                    <div class="row">
+                        <div class="col s12">
+                            <table id="page-length-option" class="display">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            File Name
+                                        </th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12">
+            <div class="card">
+                <div class="card-content">
+                    <div class="row">
+                        <div class="col s6 m6">
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.BudgetCeiling.Report")).Succeeded)
+                            {
+                                <div class="col s12">
+                                    <a id="idExportReport" class="waves-effect waves-light btn" href="#"><i class="material-icons right"></i> Download Ceiling Format Report</a>
+                                </div>
+                            }
+                        </div>
+                        <div class="col s6 m6">
+                            <div class="row">
+                                @if (Model.ApprovalStatus == 0) //click to submit
+                                {
+                                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.RevenueCollection.SubmitBudget")).Succeeded)
+                                    {
+                                        <div class="col s12">
+                                            <input type="file" id="fileInput" multiple />
+                                            <a id="idSubmitFundingSummary" class="waves-effect waves-light btn right" href="#"><i class="material-icons right"></i>Submit Budget</a>
+                                        </div>
+                                    }
+                                }
+
+                                @if (Model.ApprovalStatus == 1)//it is submitted: Click to approve
+                                {
+                                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.RevenueCollection.ApproveBudget")).Succeeded)
+                                    {
+                                        <div class="col s12">
+                                            <a id="idRejectFundingSummary" class="waves-effect waves-light btn right" href="#"><i class="material-icons right"></i> Reject Budget</a>
+                                            <a id="idApproveFundingSummary" class="waves-effect waves-light btn right" href="#"><i class="material-icons right"></i> Approve Budget</a>
+                                        </div>
+                                    }
+                                }
+                                @if (Model.ApprovalStatus == 2)//Already Approved
+                                {
+                                    <div class="col s6">
+                                        <a class="btn-flat disabled left" href="#"><i class="material-icons left">done_all</i> Already Approved</a>
+                                    </div>
+                                    <div class="col s6">
+                                        <a id="idResetFundingSummary" class="waves-effect waves-light btn right" href="#"><i class="material-icons right"></i> Reset Budget</a>
+                                    </div>
+                                }
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script language="javascript">
+    $(document).ready(function () {
+
+        //Datatable
+        $('#page-length-option').DataTable({
+            "paging": true
+            //,"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+        });
+
+        //Click Button to submit Budget Header
+        $("#idSubmitFundingSummary").on("click", function () {
+            if (window.FormData !== undefined) {
+                var files = $("#fileInput").get(0).files;
+                var fileData = new FormData();
+
+                for (var i = 0; i < files.length; i++) {
+                    fileData.append("fileInput", files[i]);
+                }
+
+                // Adding one more key to FormData object
+                var Financial_ID = $('#FinancialYear_ID option:selected').val();
+                fileData.append('FinancialID', Financial_ID);
+
+                $.ajax({
+                    url: '/RevenueCollection/SubmitBudget',
+                    type: "POST",
+                    contentType: false, // Not to set any content header
+                    processData: false, // Not to process data
+                    data: fileData,
+                    success: function (data) {
+                        console.log(data);
+                        if (data.success) {
+                            console.log(data.href)
+                            window.location.href = data.href;
+                        }
+                        else {
+                            swal(data.message, {
+                                title: 'Cancelled',
+                                icon: "error",
+                            });
+                        }
+
+                    },
+                    error: function (err) {
+                        console.log(err.statusText);
+                    }
+                });
+            }
+        });
+
+        //Click Button to Reject Budget Header
+        $("#idRejectFundingSummary").on("click", function () {
+            var Financial_ID = $('#FinancialYear_ID option:selected').val();
+            $.ajax({
+                method: "POST",
+                url: "/RevenueCollection/RejectBudget",
+                datatype: "json",
+                data: {
+                    FinancialID: Financial_ID
+                }
+            })
+                .done(function (data) {
+                    if (data.success) {
+                        console.log(data.href)
+                        window.location.href = data.href;
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Cancelled',
+                            icon: "error",
+                        });
+                    }
+                });
+        });
+
+        //Click Button to Approve Budget Header
+        $("#idApproveFundingSummary").on("click", function () {
+            var Financial_ID = $('#FinancialYear_ID option:selected').val();
+            $.ajax({
+                method: "POST",
+                url: "/RevenueCollection/ApproveBudget",
+                datatype: "json",
+                data: {
+                    FinancialID: Financial_ID
+                }
+            })
+                .done(function (data) {
+                    if (data.success) {
+                        console.log(data.href)
+                        window.location.href = data.href;
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Cancelled',
+                            icon: "error",
+                        });
+                    }
+                });
+        });
+
+        //Click Button to Reset Budget Header
+        $("#idResetFundingSummary").on("click", function () {
+            var Financial_ID = $('#FinancialYear_ID option:selected').val();
+            $.ajax({
+                method: "POST",
+                url: "/RevenueCollection/ResetBudget",
+                datatype: "json",
+                data: {
+                    FinancialID: Financial_ID
+                }
+            })
+                .done(function (data) {
+                    if (data.success) {
+                        console.log(data.href)
+                        window.location.href = data.href;
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Cancelled',
+                            icon: "error",
+                        });
+                    }
+                });
+        });
+
+        //Dialog box and delete
+        $('#idRevenueCollection').on('click', 'button.btn', function () {
+            var id = $(this).data("id");
+            //var filename = $(this).data("filename");
+
+            //$('#successModal').modal('show');
+            $("#dialog-confirm").dialog({
+                resizable: false,
+                height: "auto",
+                width: 400,
+                modal: true,
+                buttons: {
+                    "Delete all items": function () {
+                        $(this).dialog("close");
+                        //Call ajax function to delete the record and file
+                        $.ajax({
+                            method: "POST",
+                            url: "/RevenueCollection/RemoveRevenueItem",
+                            datatype: "json",
+                            data: { id: id }
+                        })
+                            .done(function (data) {
+                                if (data.success) {
+                                    console.log(data.href)
+                                    window.location.href = data.href;
+                                }
+                                else {
+                                    swal(data.message, {
+                                        title: 'Cancelled',
+                                        icon: "error",
+                                    });
+                                }
+                            });
+                    },
+                    Cancel: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        });
+
+        //Disbursement dialog box and delete
+        $('#idDisbursements').on('click', 'button.btn', function () {
+            var id = $(this).data("id");
+            //var filename = $(this).data("filename");
+
+            //$('#successModal').modal('show');
+            $("#dialog-confirm").dialog({
+                resizable: false,
+                height: "auto",
+                width: 400,
+                modal: true,
+                buttons: {
+                    "Delete all items": function () {
+                        $(this).dialog("close");
+                        //Call ajax function to delete the record and file
+                        $.ajax({
+                            method: "POST",
+                            url: "/RevenueCollection/RemoveDisbursementItem",
+                            datatype: "json",
+                            data: { id: id }
+                        })
+                            .done(function (data) {
+                                console.log("RemoveDisbursementItem: " + data);
+                                if (data.success) {
+                                    console.log(data.href)
+                                    window.location.href = data.href;
+                                }
+                                else {
+                                    swal(data.message, {
+                                        title: 'Cancelled',
+                                        icon: "error",
+                                    });
+                                }
+                            });
+                    },
+                    Cancel: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        });
+
+        //Display Uploads
+        DisplayUploads();
+
+        //Dialog box and delete
+        $('#page-length-option').on('click', 'button.btn', function () {
+            var id = $(this).data("id");
+            var filename = $(this).data("filename");
+
+            //$('#successModal').modal('show');
+            $("#dialog-confirm").dialog({
+                resizable: false,
+                height: "auto",
+                width: 400,
+                modal: true,
+                buttons: {
+                    "Delete all items": function () {
+                        $(this).dialog("close");
+                        //Call ajax function to delete the record and file
+                        $.ajax({
+                            method: "POST",
+                            url: "/RevenueCollection/DeleteBudgetAttachment",
+                            datatype: "json",
+                            data: {
+                                id: id,
+                                filename: filename,
+                                FinancialYearId: $('#FinacialYear_ID option:selected').val()
+                            }
+                        })
+                            .done(function (data) {
+                                console.log("DeleteBudgetAttachment: " + data);
+                                if (data.success) {
+                                    console.log(data.href)
+                                    window.location.href = data.href;
+                                }
+                                else {
+                                    swal(data.message, {
+                                        title: 'Cancelled',
+                                        icon: "error",
+                                    });
+                                }
+                                //Call function to populate the data table
+                                //DisplayUploads();
+                            });
+                    },
+                    Cancel: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        });
+
+        //Export Budget Ceiling Report
+        $('#idExportReport').on('click', function () {
+
+            //idReportingYear
+            FinancialYearID = $('#FinancialYear_ID option:selected').val();
+
+            $.ajax({
+                method: "POST",
+                url: "/RevenueCollection/ExportBudgetCeilingReport",
+                datatype: "json",
+                data: { FinancialYearID: FinancialYearID }
+            })
+                .done(function (data) {
+                    console.log(data.value);
+                    if (data.value.success) {
+                        window.location.href = data.value.href;
+                    }
+                    else {
+                        swal(data.value.message, {
+                            title: 'Cancelled',
+                            icon: "error",
+                        });
+                    }
+                });
+
+        });
+
+        //-----Load Budget for the selected Financial Year----
+        $("#FinancialYear_ID").bind("change paste keyup", function () {
+            //Load disbursements
+            loadBudgetActivitiesForSpecifiedFinancialYear();
+        });
+        //-----End Load disbursement for the selected Financial Year----
+    });
+
+    function loadBudgetActivitiesForSpecifiedFinancialYear() {
+        //Set Financial Year
+        var FinancialYearId = $('#FinancialYear_ID option:selected').val();
+
+        //clear all child nodes in the div named activity
+        var node = document.getElementById("view-all");
+        node.querySelectorAll('*').forEach(n => n.remove());
+
+        var urlLocation = "/RevenueCollection/BudgetActivitiesByFinancialYear?FinancialYearId=" + FinancialYearId;
+        $("#view-all").load(urlLocation, function () {
+
+        });
+    }
+
+    function DisplayUploads() {
+        // clear the table before populating it with more data
+        ClearTable();
+
+        //Hit controller to create respective roadsheets for the selected road section
+        $.ajax({
+            method: "POST",
+            url: "/RevenueCollection/GetBudgetUploads",
+            datatype: "json",
+            data: {
+                Type: "budget",
+                FinancialYearId: $('#FinacialYear_ID option:selected').val()
+            }
+        })
+            .done(function (data) {
+                //write json array object
+                console.log(data);
+                populateDataTable(data);
+            });
+    };
+
+    function populateDataTable(data) {
+        console.log("Populating data table...");
+        var length = Object.keys(data).length;
+        for (var i = 0; i < length + 1; i++) {
+            var budget = data[i];
+
+            // You could also use an ajax property on the data table initialization
+            $('#page-length-option').dataTable().fnAddData([
+                '<a href="' + GetURL(budget) + '"' + '">' + budget.filename + '</a>',
+                '<button type="button" data-dismiss="modal"' +
+                'data-id="' + budget.id + '"' +
+                'data-filename="' + budget.filename + '"' +
+                'class="btn btn-warning btn-sm">' + 'Remove' + '</button>'
+            ]);
+        }
+    }
+
+    function ClearTable() {
+        $("#page-length-option").find("tr:gt(0)").remove();
+        // clear the table before populating it with more data
+        $("#page-length-option").DataTable().clear();
+    }
+
+    function GetURL(budget) {
+        //Referer URL
+        var referer = $("#Referer").val();
+        //console.log($("#Referer").val());
+        var res = referer.split("/");
+        //console.log(res)
+        //console.log(res[0]);
+        var url = res[0] + "//" + res[2] + "/RevenueCollection/download?folder=budgets&filename=" + budget.filename;
+        return url;
+    }
+
+</script>

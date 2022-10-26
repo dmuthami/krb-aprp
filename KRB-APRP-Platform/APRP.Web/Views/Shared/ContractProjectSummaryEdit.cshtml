@@ -1,0 +1,101 @@
+﻿@model APRP.Web.Domain.Models.Contract
+
+
+
+    <div class="row">
+        <div class="col s12">
+            <div class="card #fafafa grey lighten-5">
+                <div class="card-content">
+                    <form id="contractSummaryDetailsFormEdit">
+                        @Html.HiddenFor(m => m.ID)
+                        <div class="row">
+                            <div class="input-field col m6 s12">
+                                @Html.TextBoxFor(m => m.ProjectTitle, new { @class = "validate" })
+                                @Html.LabelFor(m => m.ProjectTitle, new { @class = "active" })
+                            </div>
+                            <div class="input-field col m6 s12">
+                                @Html.TextBoxFor(m => m.Financier, new { @class = "validate" })
+                                @Html.LabelFor(m => m.Financier, new { @class = "active" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="input-field col m6 s12">
+                                @Html.TextBoxFor(m => m.Engineer, new { @class = "validate" })
+                                @Html.LabelFor(m => m.Engineer, new { @class = "active" })
+                            </div>
+                            <div class="input-field col m6 s12">
+                                @Html.TextBoxFor(m => m.EngineerRepresentative, new { @class = "validate" })
+                                @Html.LabelFor(m => m.EngineerRepresentative, new { @class = "active" })
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div id="btnSubmit" class="col s8 offset-s2">
+                                <a href="#!" class="waves-effect waves-light btn " onclick="CancelSaveContractSummaryDetails()">Cancel Edit</a>
+                                <a href="#!" class="waves-effect waves-light btn right" onclick="SaveContractSummaryDetails()">Save Contract Summary Details</a>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript">
+
+    //submit the form saving : Update the work package
+    var SaveContractSummaryDetails = function () {
+        var sendForm = $("#contractSummaryDetailsFormEdit").serialize();
+        $.ajax(
+            {
+                type: "POST",
+                url: "/WorkPlanPackage/EditPackageContractSummaryDetails",
+                data: sendForm,
+                success: function (data) {
+                    if (data.success) {
+                        swal({
+                            title: "Success",
+                            text: "Contract summary information updated successfully!",
+                            timer: 1500,
+                            icon: "success",
+                            buttons: false
+                        }).then(function () {
+                            window.location.hash = 'contractProjectSummary';
+                            window.location.reload(false);
+                        });
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Error Occured',
+                            icon: "error",
+                        });
+                    }
+                }
+
+            }
+        );
+    }
+
+    var CancelSaveContractSummaryDetails = function () {
+         window.location.hash = 'contractProjectSummary';
+         window.location.reload(false); 
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.datepicker');
+        var instances = M.Datepicker.init(elems, { container: 'body' });
+       // var instances = M.Datepicker.init(elems, { });
+        var elems = document.querySelectorAll('.modal');
+        var instances = M.Modal.init(elems);
+    });
+
+    
+    $(document).ready(function () {
+        $('.datepicker').datepicker({
+            format: 'yyyy-mm-dd'
+        });
+    });
+
+
+
+</script>

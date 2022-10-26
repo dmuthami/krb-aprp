@@ -1,0 +1,92 @@
+﻿@model APRP.Web.Domain.Models.Complaint
+
+
+
+<h5>Issue / Complains</h5>
+
+
+
+
+<form id="complaintForm">
+    @Html.HiddenFor(m => m.ID)
+    @if (Model.ID > 0)
+    {
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                @Html.TextBoxFor(m => m.Description, new { @readonly= "readonly",  @class = "validate active" })
+                @Html.LabelFor(m => m.Description, new { @class = "active" })
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                @Html.TextBoxFor(m => m.Description, new { @class = "validate active" })
+                @Html.LabelFor(m => m.Description, new { @class = "active" })
+            </div>
+        </div>
+    }
+    @if (Model.ID > 0)
+    {
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                @Html.DropDownListFor(m => m.ComplaintTypeId, ViewBag.ComplaintTypeList as SelectList, "Please choose", new { @readonly= "readonly" })
+
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                @Html.DropDownListFor(m => m.ComplaintTypeId, ViewBag.ComplaintTypeList as SelectList, "Please choose")
+
+            </div>
+        </div>
+    }
+
+    @if (Model.ID > 0)
+    {
+        <div class="row">
+            <div class="input-field col s8 offset-s2">
+                @Html.TextBoxFor(m => m.Code, new { @class = "validate active" })
+                @Html.LabelFor(m => m.Code, new { @class = "active" })
+            </div>
+        </div>
+    }
+
+</form>
+
+<script type="text/javascript">
+
+    //submit the form saving : UpdatePlanActivity
+
+    var UpdateComplaint = function () {
+        var sendForm = $("#complaintForm").serialize();
+        $.ajax(
+            {
+                type: "POST",
+                url: "/Issue/AddEditComplaint",
+                data: sendForm,
+                success: function (data) {
+                    if (data.success) {
+                        $("#modalViewId").modal('close');
+                        window.location.href = data.href;
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Error Occured',
+                            icon: "error",
+                        });
+                    }
+                }
+
+            }
+        );
+    }
+     $(document).ready(function () {
+        $('select').formSelect();
+      });
+
+</script>

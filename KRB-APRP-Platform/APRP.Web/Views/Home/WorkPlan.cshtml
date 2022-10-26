@@ -1,0 +1,566 @@
+﻿@model IEnumerable<APRP.Web.Domain.Models.Road>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Home Page";
+}
+
+@section vendorCss
+{
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/chartist-js/chartist.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/chartist-js/chartist-plugin-tooltip.css" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/animate-css/animate.css" />
+}
+
+@section customCss{
+
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/css/pages/dashboard-modern.css" />
+}
+
+@section aside
+{
+    <!-- BEGIN: SideNav-->
+    <aside class="sidenav-main nav-expanded nav-lock nav-collapsible sidenav-dark sidenav-active-rounded">
+
+        <div class="brand-sidebar">
+            <h1 class="logo-wrapper">
+                <a class="brand-logo darken-1" asp-controller="Home" asp-action="Dashboard">
+                    <img src="~/asset_default/app-assets/images/logo/menu-logo.png" alt="REPARS logo" /><span class="logo-text hide-on-med-and-down">REPARS</span>
+                </a>
+                <a class="navbar-toggler" href="#"><i class="material-icons">radio_button_checked</i></a>
+            </h1>
+        </div>
+
+        <ul class="sidenav sidenav-collapsible leftside-navigation collapsible sidenav-fixed menu-shadow" id="slide-out" data-menu="menu-navigation" data-collapsible="accordion">
+            <li class="active bold">
+                <a class="waves-effect waves-cyan active " asp-controller="Home" asp-action="Dashboard"><i class="material-icons">home</i><span id="idHomeAuthority" class="menu-title" data-i18n="">Home</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan" href="#">
+                    <i class="material-icons">timeline</i>
+                    <span class="menu-title" data-i18n="">Road Networks</span>
+                </a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        <li>
+                            <a asp-controller="Road" asp-action="Index" data-i18n="" class="collapsible-body">
+                                <i class="material-icons">radio_button_unchecked</i><span>Road Network</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="collapsible-header waves-effect waves-cyan" href="#">
+                                <i class="material-icons">radio_button_unchecked</i>
+                                <span class="menu-title" data-i18n="">Road Classification</span>
+                            </a>
+                            <div class="collapsible-body">
+                                <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadClassCodeUnits" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Class</span></a>
+                                    </li>
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadConditionCodeUnits" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Condition</span></a>
+                                    </li>
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadClassifications" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Classifications</span></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Administrator.Role.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan" href="#">
+                        <i class="material-icons">supervisor_account</i>
+                        <span class="menu-title" data-i18n="">User Management</span>
+                    </a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            <li>
+                                <a class="collapsible-body" asp-page="/users/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Users</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/roles/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Approvals</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/UserAccess/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>User Access List</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-controller="Permissions" asp-action="ListRoleClaims" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Groups</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            }
+
+            <!--ARICS Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">filter_tilt_shift</i><span class="menu-title" data-i18n="">ARICS</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.ConductARICS")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-page="/ARICZ/UploadARICS" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Upload ARICS</span></a>
+                                </li>
+                            }
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.ConductARICS")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-page="/ARICZ/ConductARICS" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Direct Data Entry</span></a>
+                                </li>
+                            }
+                            <li><a asp-page="/aricz/aricshome" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARICS Summary</span></a></li>
+                            <li><a asp-controller="arics" asp-action="aricsapprovalagency" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARICS Approvals</span></a></li>
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End ARICS Menu Group-->
+
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.GIS.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">filter_tilt_shift</i><span class="menu-title" data-i18n="">GIS</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            <li>
+                                <a target="_blank" asp-page="/nrsmap/Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>View GIS Roads</span></a>
+                            </li>
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KENHA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKENHA" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>KenHA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KURA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKURA" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KuRA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KERRA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKERRA" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KeRRA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KWS.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKWS" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KWS GIS</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Counties.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexCounties" data-i18n="" class="collapsible-body"><i class="material-icons"></i><span>Counties GIS</span></a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+            }
+
+            <!--Budgeting Menu Group-->
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">monetization_on</i><span class="menu-title" data-i18n="">Budgeting</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Finance.View")).Succeeded)
+                        {
+                            <li>
+                                <a asp-controller="Admin" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Financial Year</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/AllocationCodeUnitRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Allocation Ratios</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/AllocationRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Allocation Figures</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-controller="RevenueCollectionCodeUnitTypes" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection Types</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/RevenueCollectionCodeUnitRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection Code Units</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/RevenueCollectionRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection</span></a>
+                            </li>
+                            <li><a asp-controller="RevenueCollection" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Budget Approvals</span></a></li>
+                            <li><a asp-controller="Disbursement" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Disbursement</span></a></li>
+                        }
+                    </ul>
+                </div>
+            </li>
+            <!--End Budgeting Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.WorkplanPermissions.View")).Succeeded)
+            {
+                <!--Workplanning Menu Group-->
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">monetization_on</i><span class="menu-title" data-i18n="">Work Planning</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            <li>
+                                <a asp-controller="workplan" asp-action="Prioritization" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Prioritization</span></a>
+                            </li>
+                            <li>
+                                <a asp-controller="workplan" asp-action="GetRoadsForWorkPlan" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Work Plan</span></a>
+                            </li>
+                            <li>
+                                <a asp-controller="workplan" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARWP Summary</span></a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <!--End Workplanning Menu Group-->
+            }
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">invert_colors</i><span class="menu-title" data-i18n="">Contract Management</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="RoadWorkPackaging" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Work Packaging</span></a>
+                        </li>
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="ContractDetails" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contract Details</span></a>
+                        </li>
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="ProjectProgressDetails" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Project Progress</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Reports" asp-action="index"><i class="material-icons">import_contacts</i><span class="menu-title" data-i18n="">Report Management</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Issue" asp-action="Index"><i class="material-icons">chat</i><span class="menu-title" data-i18n="">Complaints / Issues</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">invert_colors</i><span class="menu-title" data-i18n="">Training</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.QuarterCodeList.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-page="/QuarterCodeListRx/Index" data-i18n=""><i class="material-icons"></i><span>Quarter Code List</span></a>
+                            </li>
+                        }
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.QuarterCodeUnit.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-page="/QuarterCodeUnitRx/Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Quarter Code Unit</span></a>
+                            </li>
+                        }
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.TrainingCourse.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="TrainingCourses"
+                                   asp-action="Index" data-i18n="">
+                                    <i class="material-icons">radio_button_unchecked</i>
+                                    <span>Courses</span>
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a class="collapsible-body" asp-page="/TrainingRx/Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Training</span></a>
+                        </li>
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Training.Report")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="Training" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Training Report</span></a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+            <!--Administration Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Administrator.Role.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">add_to_queue</i><span class="menu-title" data-i18n="">Admin</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ActivityGroup.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="Admin" asp-action="UnitCost" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Activity Code List</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundingSource.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="FundingSources" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Funding Sources</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundType.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="FundTypes" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Fund Types</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Authority.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="Authorities" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Authorities</span></a>
+                                </li>
+                            }
+
+                                                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Contractor.View")).Succeeded){<li><a class="collapsible-body" asp-controller="Admin" asp-action="Contractors" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contractors</span></a></li>}@if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICSYear.View")).Succeeded){<li><a class="collapsible-body" asp-controller="ARICS" asp-action="ARICSYearIndex" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Calendar Year</span></a></li>}
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="Contractors" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contractors</span></a>
+                                </li>
+                            }
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICSYear.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="ARICS" asp-action="ARICSYearIndex" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Calendar Year</span></a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End Administration Menu Group-->
+        </ul>
+        <div class="navigation-background"></div>
+        <a class="sidenav-trigger btn-sidenav-toggle btn-floating btn-medium waves-effect waves-light hide-on-large-only" href="#" data-target="slide-out"><i class="material-icons">menu</i></a>
+    </aside>
+    <!-- END: SideNav-->
+}
+
+<div class="row mt-4">
+    <div class="col s12 m4 l4">
+        <!-- Current Balance -->
+        <div class="card animate fadeLeft">
+            <div class="card-content">
+                <h4 class="card-title mb-0">Current Balance <i class="material-icons float-right">more_vert</i></h4>
+                <p class="medium-small">This billing cycle</p>
+                <div class="current-balance-container">
+                    <div id="current-balance-donut-chart" class="current-balance-shadow"></div>
+                </div>
+                <h5 class="center-align">$ 50,150.00</h5>
+                <p class="medium-small center-align">Used balance this billing cycle</p>
+            </div>
+        </div>
+    </div>
+    <div class="col s12 m8 l8 animate fadeRight">
+        <!-- Total Transaction -->
+        <div class="card">
+            <div class="card-content">
+                <h4 class="card-title mb-0">Total Transaction <i class="material-icons float-right">more_vert</i></h4>
+                <p class="medium-small">This month transaction</p>
+                <div class="total-transaction-container">
+                    <div id="total-transaction-line-chart" class="total-transaction-shadow"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--/ Current balance & total transactions cards-->
+<!-- User statistics & appointment cards-->
+<div class="row">
+    <div class="col s12 l5">
+        <!-- User Statistics -->
+        <div class="card user-statistics-card animate fadeLeft">
+            <div class="card-content">
+                <h4 class="card-title mb-0">User Statistics <i class="material-icons float-right">more_vert</i></h4>
+                <div class="row">
+                    <div class="col s12 m6">
+                        <ul class="collection border-none mb-0">
+                            <li class="collection-item avatar">
+                                <i class="material-icons circle pink accent-2">trending_up</i>
+                                <p class="medium-small">This year</p>
+                                <h5 class="mt-0 mb-0">60%</h5>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col s12 m6">
+                        <ul class="collection border-none mb-0">
+                            <li class="collection-item avatar">
+                                <i class="material-icons circle purple accent-4">trending_down</i>
+                                <p class="medium-small">Last year</p>
+                                <h5 class="mt-0 mb-0">40%</h5>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="user-statistics-container">
+                    <div id="user-statistics-bar-chart" class="user-statistics-shadow"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col s12 l4">
+        <!-- Recent Buyers -->
+        <div class="card recent-buyers-card animate fadeUp">
+            <div class="card-content">
+                <h4 class="card-title mb-0">Recent Buyers <i class="material-icons float-right">more_vert</i></h4>
+                <p class="medium-small pt-2">Today</p>
+                <ul class="collection mb-0">
+                    <li class="collection-item avatar">
+                        <img src="/asset_default/app-assets/images/avatar/avatar-7.png" alt="" class="circle" />
+                        <p class="font-weight-600">John Doe</p>
+                        <p class="medium-small">18, January 2019</p>
+                        <a href="#!" class="secondary-content"><i class="material-icons">star_border</i></a>
+                    </li>
+                    <li class="collection-item avatar">
+                        <img src="/asset_default/app-assets/images/avatar/avatar-3.png" alt="" class="circle" />
+                        <p class="font-weight-600">Adam Garza</p>
+                        <p class="medium-small">20, January 2019</p>
+                        <a href="#!" class="secondary-content"><i class="material-icons">star_border</i></a>
+                    </li>
+                    <li class="collection-item avatar">
+                        <img src="/asset_default/app-assets/images/avatar/avatar-5.png" alt="" class="circle" />
+                        <p class="font-weight-600">Jennifer Rice</p>
+                        <p class="medium-small">25, January 2019</p>
+                        <a href="#!" class="secondary-content"><i class="material-icons">star_border</i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col s12 l3">
+        <div class="card animate fadeRight">
+            <div class="card-content">
+                <h4 class="card-title mb-0">Conversion Ratio</h4>
+                <div class="conversion-ration-container mt-8">
+                    <div id="conversion-ration-bar-chart" class="conversion-ration-shadow"></div>
+                </div>
+                <p class="medium-small center-align">This month conversion ratio</p>
+                <h5 class="center-align mb-0 mt-0">62%</h5>
+            </div>
+        </div>
+    </div>
+</div>
+<!--/ Current balance & appointment cards-->
+
+<div class="row">
+    <div class="col s12 m6 l4">
+        <div class="card padding-4 animate fadeLeft">
+            <div class="col s5 m5">
+                <h5 class="mb-0">1885</h5>
+                <p class="no-margin">New</p>
+                <p class="mb-0 pt-8">1,12,900</p>
+            </div>
+            <div class="col s7 m7 right-align">
+                <i class="material-icons background-round mt-5 mb-5 gradient-45deg-purple-amber gradient-shadow white-text">perm_identity</i>
+                <p class="mb-0">Total Clients</p>
+            </div>
+        </div>
+        <div id="chartjs" class="card pt-0 pb-0 animate fadeLeft">
+            <div class="padding-2 ml-2">
+                <span class="new badge gradient-45deg-indigo-purple gradient-shadow mt-2 mr-2">+ $900</span>
+                <p class="mt-2 mb-0 font-weight-600">Today's revenue</p>
+                <p class="no-margin grey-text lighten-3">$40,512 avg</p>
+                <h5>$ 22,300</h5>
+            </div>
+            <div class="row">
+                <div class="sample-chart-wrapper card-gradient-chart">
+                    <canvas id="custom-line-chart-sample-three" class="center"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col s12 m6 l8">
+        <div class="card subscriber-list-card animate fadeRight">
+            <div class="card-content pb-1">
+                <h4 class="card-title mb-0">Subscriber List <i class="material-icons float-right">more_vert</i></h4>
+            </div>
+            <table class="subscription-table responsive-table highlight">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Company</th>
+                        <th>Start Date</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Michael Austin</td>
+                        <td>ABC Fintech LTD.</td>
+                        <td>Jan 1,2019</td>
+                        <td><span class="badge pink lighten-5 pink-text text-accent-2">Close</span></td>
+                        <td>$ 1000.00</td>
+                        <td class="center-align"><a href="#"><i class="material-icons pink-text">clear</i></a></td>
+                    </tr>
+                    <tr>
+                        <td>Aldin Rakić</td>
+                        <td>ACME Pvt LTD.</td>
+                        <td>Jan 10,2019</td>
+                        <td><span class="badge green lighten-5 green-text text-accent-4">Open</span></td>
+                        <td>$ 3000.00</td>
+                        <td class="center-align"><a href="#"><i class="material-icons pink-text">clear</i></a></td>
+                    </tr>
+                    <tr>
+                        <td>İris Yılmaz</td>
+                        <td>Collboy Tech LTD.</td>
+                        <td>Jan 12,2019</td>
+                        <td><span class="badge green lighten-5 green-text text-accent-4">Open</span></td>
+                        <td>$ 2000.00</td>
+                        <td class="center-align"><a href="#"><i class="material-icons pink-text">clear</i></a></td>
+                    </tr>
+                    <tr>
+                        <td>Lidia Livescu</td>
+                        <td>My Fintech LTD.</td>
+                        <td>Jan 14,2019</td>
+                        <td><span class="badge pink lighten-5 pink-text text-accent-2">Close</span></td>
+                        <td>$ 1100.00</td>
+                        <td class="center-align"><a href="#"><i class="material-icons pink-text">clear</i></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div><!-- START RIGHT SIDEBAR NAV -->
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                method: "POST",
+                url: "/UserManagement/GetShortName",
+                datatype: "json",
+                data: {}
+            })
+                .done(function (data) {
+                    //write json array object
+                    console.log(data);
+                    //Set Road Section ID to null
+
+                    $("#idSpan").text(data.sn);
+                    var Val1 = $("#idHomeAuthority").text();
+                    $("#idHomeAuthority").text(Val1 + "-" + data.authorityCode); $("#idGlobalAuthority").text(data.authorityName);
+                });
+        });
+
+
+    </script>
+}

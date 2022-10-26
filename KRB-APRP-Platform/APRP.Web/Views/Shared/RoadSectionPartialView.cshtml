@@ -1,0 +1,64 @@
+﻿@model APRP.Web.ViewModels.RoadSectionEditModel
+
+@{
+    if (Model.RoadSection.ID > 0)
+    {
+        <h5>Edit Road Section for : @Model.Road.RoadName</h5>
+    }
+    else
+    {
+        <h5>New Road Section for : @Model.Road.RoadName </h5>
+    }
+
+}
+<form id="budgetLineForm">
+    @Html.HiddenFor(m => m.Road.ID)
+    @Html.HiddenFor(m => m.RoadSection.ID)
+
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.RoadSection.SectionName,  new { @class = "validate active" })
+            @Html.LabelFor(m => m.RoadSection.SectionName, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.RoadSection.SectionID, new { @class = "validate active" })
+            @Html.LabelFor(m => m.RoadSection.SectionID, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.RoadSection.StartChainage, new { @class = "validate active" })
+            @Html.LabelFor(m => m.RoadSection.StartChainage, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.RoadSection.EndChainage, new { @class = "validate active" })
+            @Html.LabelFor(m => m.RoadSection.EndChainage, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.RoadSection.Length, new { @class = "validate active" })
+            @Html.LabelFor(m => m.RoadSection.Length, new { @class = "active" })
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.DropDownListFor(m => m.RoadSection.SurfaceTypeId, ViewBag.SurfaceTypeList as SelectList, "Please Surface Type")
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.DropDownListFor(m => m.RoadSection.ConstituencyId, ViewBag.ConstituencyList as SelectList, "Please Constituency")
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('select').formSelect();
+    });
+</script>

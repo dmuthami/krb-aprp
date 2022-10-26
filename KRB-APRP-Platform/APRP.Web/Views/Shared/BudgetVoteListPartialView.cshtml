@@ -1,0 +1,83 @@
+﻿@model APRP.Web.ViewModels.BudgetVoteViewModel
+
+@{
+    Layout = null;
+}
+
+
+<table class="subscription-table responsive-table striped" id="page-length-option">
+    <thead>
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.BudgetCeilingComputation.Code)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BudgetCeilingComputation.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BudgetCeilingComputation.Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BudgetCeilingComputation.Authority)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.BudgetCeilingComputations.Any())
+        {
+            foreach (var item in Model.BudgetCeilingComputations)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Code)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @{
+                            var amount = item.Amount;
+                            @String.Format("{0:0,0.00}", amount)
+                        }
+                    </td>
+                    <td>
+                        @{
+                            var authority = item.Authority.Code + "-" + item.Authority.Name;
+                            @authority;
+                           
+                        }
+                    </td>
+                    <td>
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.BudgetCeilingComputation.Change")).Succeeded)
+                        {
+                            <a onclick="ShowinPopUp('@Url.Action("BudgetVoteListAddEdit","RevenueCollection", new { id = @item.ID, FinancialYearId=0 },Context.Request.Scheme)','Edit')">
+                                <i class="material-icons pink-text">mode_edit</i>
+                            </a>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.BudgetCeilingComputation.View")).Succeeded)
+                        {
+                            <a asp-controller="RevenueCollection" asp-action="BudgetVoteListDetails"
+                               asp-route-Id="@item.ID">
+                                <i class="material-icons pink-text">details</i>
+                            </a>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.BudgetCeilingComputation.Delete")).Succeeded)
+                        {
+                            <a onclick="ShowinPopUp('@Url.Action("BudgetVoteListDelete","RevenueCollection", new { id = @item.ID },Context.Request.Scheme)','Delete')">
+                                <i class="material-icons pink-text">delete</i>
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+<script language="javascript">
+    $('#page-length-option').DataTable({
+        "paging": true
+        //,"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    });
+</script>

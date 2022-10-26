@@ -1,0 +1,95 @@
+﻿@model APRP.Web.ViewModels.DisbursementViewModel
+
+@{
+    Layout = null;
+}
+
+
+<table class="subscription-table responsive-table striped" id="page-length-option">
+    <thead>
+        <tr>
+            <th>
+                Road Agency/Recepient
+            </th>
+            <th>
+                Percent
+            </th>
+            <th>
+                Annual Ceiling
+            </th>
+            <th>
+                Total Disbursement to Date
+            </th>
+            <th>
+                % of Ceiling
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.DisbursementSummaryViewModels.Any())
+        {
+            foreach (var item in Model.DisbursementSummaryViewModels)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Authority.Code)-@Html.DisplayFor(modelItem => item.Authority.Name)
+                    </td>
+                    <td>
+                        @{
+                            var percent = item.Percent;
+                            @String.Format("{0:0.0%}", percent)
+                        }
+                    </td>
+                    <td>
+                        @{
+                            var annualCeiling = item.AnnualCeiling;
+                            @String.Format("{0:0,0.00}", annualCeiling)
+                        }
+                    </td>
+                    <td>
+                        @{
+                            var totalDisbursement = item.TotalDisbursement;
+                            @String.Format("{0:0,0.00}", totalDisbursement)
+                        }
+                    </td>
+                    <td>
+
+                        @{
+                            var x = item.PercentOfCeiling;
+                            @String.Format("{0:0.00%}", x)
+                        }
+
+                    </td>
+                    <td>
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Disbursement.View")).Succeeded)
+                        {
+                            <a asp-controller="Disbursement" asp-action="Details" asp-route-AuthorityId="@item.AuthorityId"
+                               asp-route-FinancialYearId="@item.FinancialYearId">
+                                <i class="material-icons pink-text">details</i>
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@*<div class="row">
+    <div class="col xl12 l12 m12 s12">
+        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ActivityItem.Add")).Succeeded)
+        {
+            <a asp-action="ActivityListCreate" asp-route-ItemActivityGroupId="2" class="waves-effect waves-light btn">
+                <i class="material-icons right">gps_fixed</i>Add Activity Item
+            </a>
+        }
+        <a id="IDBackToList2" class="waves-effect waves-light btn"><i class="material-icons right">gps_fixed</i>Back</a>
+    </div>
+</div>*@
+<script language="javascript">
+    $('#page-length-option').DataTable({
+        "paging": true
+        //,"lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    });
+</script>

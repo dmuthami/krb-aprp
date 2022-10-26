@@ -1,0 +1,61 @@
+﻿@model APRP.Web.ViewModels.FundingSourceViewModel
+
+@{
+    Layout = null;
+}
+
+<table id="page-length-option" class="striped display">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.FundingSource.ShortName)</th>
+            <th>@Html.DisplayNameFor(model => model.FundingSource.Code)</th>
+            <th>@Html.DisplayNameFor(model => model.FundingSource.Name)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var source in Model.FundingSourceList)
+        {
+        <tr>
+            <td class="center-align">
+                <a href="#" onclick="ShowFundingSourcesSubCodes(@source.ID)">@source.ShortName</a>
+            </td>
+            <td>
+                @source.Code
+            </td>
+            <td>@source.Name</td>
+            <td class="center-align">
+                @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundingSource.Change")).Succeeded)
+                {
+                    <a asp-action="FundingSourcesEdit" asp-route-id="@source.ID"><i class="material-icons pink-text">mode_edit</i></a><text>&nbsp;</text>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundingSource.Delete")).Succeeded)
+                {
+                    <a asp-action="FundingSourcesDelete" asp-route-id="@source.ID"><i class="material-icons pink-text">clear</i></a><text>&nbsp;</text>
+                }
+                @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundingSource.View")).Succeeded)
+                {
+                    <a asp-action="FundingSourcesDetails" asp-route-id="@source.ID"><i class="material-icons pink-text">play_arrow</i></a><text>&nbsp;</text>
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+
+</table>
+
+<div class="row">
+    <div class="col xl12 l12 m12 s12">
+        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ActivityGroup.Add")).Succeeded)
+        {
+            <a asp-action="FundingSourcesCreate" class="waves-effect waves-light btn">
+                <i class="material-icons right">gps_fixed</i>Add Funding Source
+            </a>
+        }
+        @*<a id="IDBackToList2" class="waves-effect waves-light btn"><i class="material-icons right">gps_fixed</i>Back</a>*@
+    </div>
+</div>
+
+<script language="javascript">
+    $('#page-length-option').DataTable();
+</script>

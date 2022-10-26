@@ -1,0 +1,150 @@
+﻿@model IEnumerable<APRP.Web.Domain.Models.ItemActivityUnitCost>
+
+<link href="~/asset_default/app-assets/css/pages/app-full-contacts.css" rel="stylesheet" />
+
+
+<div class="section card-content">
+    <h5 class="card-title">Please select item activities for planning</h5>
+    <div id="button-trigger" class="card card-default scrollspy border-radius-6 fixed-width">
+        <div class="card-content p-4">
+            <table id="data-table-unit-activities-select" class="striped display" style="width:100%">
+                <thead class="tbl-header">
+                    <tr>
+                        <th>Item Code</th>
+                        <th>Sub Item</th>
+                        <th>S/ Sub Item</th>
+                        <th>Description</th>
+                        <th>Unit Description</th>
+                        <th>Unit Measure</th>
+                        <th>Unit Code</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var activity in Model.OrderBy(i => i.ItemCode))
+                        {
+
+                            <tr>
+                                <td>@activity.ItemCode</td>
+                                <td>@activity.SubItemCode</td>
+                                <td>@activity.SubSubItemCode</td>
+                                <td>@activity.Description</td>
+                                <td>@activity.UnitDescription</td>
+                                <td>@activity.UnitMeasure</td>
+                                <td>@activity.UnitCode</td>
+                                <td class="center-align">
+                                    <label>
+                                        <input type="checkbox" value="@activity.ID" />
+                                        <span></span>
+                                    </label>
+                                </td>
+                            </tr>
+
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9">There are no activity records to display. Please set upload the data</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+<script>
+    //Call function to load data
+    $(document).ready(function () {
+
+        var calcDataTableHeight = function () {
+            return $(window).height() - 375 + "px";
+        };
+
+        var table = $("#data-table-unit-activities-select").DataTable({
+            sScrollY: calcDataTableHeight(),
+            scrollCollapse: true,
+            paging: true,
+            bLengthChange: false,
+            //bInfo: false,
+            //searching: false,
+            responsive: true,
+            lengthMenu: [10],
+            aoColumns: [
+                null,
+                null,
+                null,
+                null,
+                {
+                    bSortable: false
+                },
+                {
+                    bSortable: false
+                },
+                {
+                    bSortable: false
+                },
+                {
+                    bSortable: false
+                }
+            ]
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+    /*
+            * DataTables - Tables
+            */
+
+
+
+
+    var GetSelectedValues = function (sectionPlanId) {
+        var $chkboxes = $("#data-table-unit-activities-select").find("tr input[type='checkbox']:checked");
+        //data-table-unit-activities
+        var checkBoxVals = $chkboxes.map(function () {
+            return $(this).val();
+        }).toArray();
+
+        SubmitSelectedActivities(sectionPlanId, checkBoxVals);
+
+    }
+
+    var SubmitSelectedActivities = function (sectionPlanId, seletectedIds) {
+        // let keys = Array.from( seletectedIds.keys() );
+        $.ajax(
+            {
+                type: "POST",
+                url: "/Workplan/UpdateSelectedItemActivities",
+                data: {
+                    seletectedIds: seletectedIds,
+                    sectionPlanId: sectionPlanId
+                },
+                success: function (data) {
+                    console.log(data);
+                    if (data.success) {
+                        swal({
+                            title: "Success",
+                            text: "Instructed Works Item Activities added successfully to the workplan!",
+                            timer: 2000,
+                            icon: "success",
+                            buttons: false
+                        }).then(function () {
+                            window.location.href = data.href;
+                        });
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Cancelled',
+                            icon: "error",
+                        });
+                    }
+                }
+            });
+    }
+</script>

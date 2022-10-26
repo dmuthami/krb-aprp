@@ -1,0 +1,14 @@
+﻿/.vs
+/APRP.Web/bin/Debug
+/APRP.Web/Migrations
+/APRP.Web/obj
+/APRP.Web/bin/Release/netcoreapp3.1
+/APRP.Web/Logs
+
+/APRP.Services.AuthorityAPI/bin
+/APRP.Services.AuthorityAPI/obj
+
+/WorkplanAPI/bin
+/WorkplanAPI/obj
+
+/.vscode

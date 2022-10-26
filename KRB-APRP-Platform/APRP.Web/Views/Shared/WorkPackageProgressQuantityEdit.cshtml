@@ -1,0 +1,77 @@
+﻿@model APRP.Web.ViewModels.PackageQuantityEditViewModel
+
+<div class="row">
+    <form id="workplanPackageProgressQuantityFormEdit" class="col s12">
+        @Html.HiddenFor(m => m.PlanActivity.ID)
+        @Html.HiddenFor(m => m.workPackageId)
+        @Html.HiddenFor(m => m.EditFlag)
+        <div class="row">
+            <div class="input-field col m12 s12">
+                @Html.TextBoxFor(m => m.PlanActivity.ItemActivityUnitCost.Description, new { @class = "validate active", @readonly= "readonly" })
+                @Html.LabelFor(m => m.PlanActivity.ItemActivityUnitCost.Description, new { @class = "active" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col m12 s12">
+                @Html.TextBoxFor(m => m.PlanActivity.PackageQuantity, new { @class = "active validate ", @readonly= "readonly" })
+                @Html.LabelFor(m => m.PlanActivity.PackageQuantity, new { @class = "active" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col m12 s12">
+                @Html.TextBoxFor(m => m.PlanActivity.PreviousQuantity, new { @class = "active validate ", @readonly= "readonly" })
+                @Html.LabelFor(m => m.PlanActivity.PreviousQuantity, new { @class = "active" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col m12 s12">
+                @Html.TextBoxFor(m => m.PlanActivity.ThisQuantity, new { @class = "active validate ", @readonly= "readonly" })
+                @Html.LabelFor(m => m.PlanActivity.ThisQuantity, new { @class = "active" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col m12 s12">
+                @Html.TextBoxFor(m => m.PlanActivity.DoneTodateQuantity, new { @class = "active validate ", @readonly= "readonly" })
+                @Html.LabelFor(m => m.PlanActivity.DoneTodateQuantity, new { @class = "active" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col m12 s12">
+                @Html.TextBoxFor(m => m.ProgressQuantity, new { @class = "active validate " })
+                @Html.LabelFor(m => m.PlanActivity.ThisQuantity, new { @class = "active" })
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<script type="text/javascript">
+
+    //submit the form saving : Update the work package
+    var SavePackageProgress = function () {
+        var sendForm = $("#workplanPackageProgressQuantityFormEdit").serialize();
+        $.ajax(
+            {
+                type: "POST",
+                url: "/WorkPlanPackage/EditProgressQuantity",
+                data: sendForm,
+                success: function (data) {
+                    if (data.success) {
+                        //$("#modalViewPackageQuantityId").modal('close');
+                        //window.location.href = window.loc.href + "#contractActivities";
+                        window.location.hash = 'contractActivitiesProgress';
+                        window.location.reload(false); 
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Error Occured',
+                            icon: "error",
+                        });
+                    }
+                }
+
+            }
+        );
+    }
+
+</script>

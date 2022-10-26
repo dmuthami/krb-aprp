@@ -1,0 +1,30 @@
+﻿@model APRP.Web.ViewModels.CSAllocationViewModel
+
+<div>
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CSAllocation.Authority.Code)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CSAllocation.Authority.Code)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CSAllocation.Authority.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CSAllocation.Authority.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CSAllocation.BudgetCeilingComputation.Code)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CSAllocation.BudgetCeilingComputation.Code)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.CSAllocation.Amount)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.CSAllocation.Amount)
+        </dd>
+    </dl>
+</div>

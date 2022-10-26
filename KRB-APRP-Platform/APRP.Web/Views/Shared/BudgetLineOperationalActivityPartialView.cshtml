@@ -1,0 +1,45 @@
+﻿@model APRP.Web.Domain.Models.RoadWorkOperationalActivitiesBudget
+
+@{
+    if (Model.ID > 0)
+    {
+        <h5>Edit Budget Operational Activity </h5>
+    }
+    else
+    {
+        <h5>New Budget Operational Activity </h5>
+    }
+
+}
+
+<form id="budgetLineForm">
+    @Html.HiddenFor(m => m.ID)
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.DropDownListFor(m => m.FundingSourceId, ViewBag.FundingSourceList as SelectList, "Please choose")
+
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.DropDownListFor(m => m.FundTypeId, ViewBag.FundTypeList as SelectList, "Please choose")
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="input-field col s8 offset-s2">
+            @Html.TextBoxFor(m => m.OverHeadBudget, new { @class = "validate active" })
+            @Html.LabelFor(m => m.OverHeadBudget, new { @class = "active" })
+        </div>
+    </div>
+
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('select').formSelect();
+    });
+
+
+</script>

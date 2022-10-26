@@ -1,0 +1,1502 @@
+﻿@using APRP.Web.Domain.Models
+@model APRP.Web.ViewModels.FinancialProgressViewModel
+
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout_App.cshtml";
+
+}
+
+
+@section vendorCss
+{
+
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/flag-icon/css/flag-icon.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/extensions/responsive/css/responsive.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/data-tables/css/select.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/vendors/dropify/css/dropify.min.css">
+
+}
+
+@section customCss
+{
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/css/pages/app-chat.css">
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/css/pages/data-tables.css">
+    <link href="~/asset_default/app-assets/vendors/sweetalert/sweetalert.css" type="text/css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/asset_default/app-assets/css/pages/data-tables.css">
+
+}
+
+@section aside
+{
+    <!-- BEGIN: SideNav-->
+    <aside class="sidenav-main nav-expanded nav-lock nav-collapsible sidenav-dark sidenav-active-rounded">
+
+        <div class="brand-sidebar">
+            <h1 class="logo-wrapper">
+                <a class="brand-logo darken-1" asp-controller="Home" asp-action="Dashboard">
+                    <img src="/asset_default/app-assets/images/logo/rms-logo.png" alt="REPARS logo" /><span class="logo-text hide-on-med-and-down">REPARS</span>
+                </a>
+                <a class="navbar-toggler" href="#"><i class="material-icons">radio_button_checked</i></a>
+            </h1>
+        </div>
+
+        <ul class="sidenav sidenav-collapsible leftside-navigation collapsible sidenav-fixed menu-shadow" id="slide-out" data-menu="menu-navigation" data-collapsible="accordion">
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Home" asp-action="Dashboard"><i class="material-icons">home</i><span id="idHomeAuthority" class="menu-title" data-i18n="">Home</span></a>
+            </li>
+
+            <!--Administration Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Administrator.Role.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">add_to_queue</i><span class="menu-title" data-i18n="">Administration</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ActivityGroup.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="Admin" asp-action="UnitCost" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Activity Code List</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundingSource.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="FundingSources" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Funding Sources</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundType.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="FundTypes" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Fund Types</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Authority.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="Authorities" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Authorities</span></a>
+                                </li>
+                            }
+
+                                                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Contractor.View")).Succeeded){<li><a class="collapsible-body" asp-controller="Admin" asp-action="Contractors" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contractors</span></a></li>}@if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICSYear.View")).Succeeded){<li><a class="collapsible-body" asp-controller="ARICS" asp-action="ARICSYearIndex" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Calendar Year</span></a></li>}
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End Administration Menu Group-->
+
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan" href="#">
+                    <i class="material-icons">timeline</i>
+                    <span class="menu-title" data-i18n="">Road Networks</span>
+                </a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        <li>
+                            <a asp-controller="Road" asp-action="Index" data-i18n="" class="collapsible-body">
+                                <i class="material-icons">radio_button_unchecked</i><span>Road Network</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="collapsible-header waves-effect waves-cyan" href="#">
+                                <i class="material-icons">radio_button_unchecked</i>
+                                <span class="menu-title" data-i18n="">Road Classification</span>
+                            </a>
+                            <div class="collapsible-body">
+                                <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadClassCodeUnits" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Class</span></a>
+                                    </li>
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadConditionCodeUnits" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Condition</span></a>
+                                    </li>
+                                    <li>
+                                        <a class="collapsible-body" asp-controller="RoadClassifications" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Classifications</span></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Administrator.Role.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan" href="#">
+                        <i class="material-icons">supervisor_account</i>
+                        <span class="menu-title" data-i18n="">User Management</span>
+                    </a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            <li>
+                                <a class="collapsible-body" asp-page="/UserAccess/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>User Access List</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/users/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Users</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/roles/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Approvals</span></a>
+                            </li>
+
+                            <li>
+                                <a class="collapsible-body" asp-controller="Permissions" asp-action="ListRoleClaims" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Groups</span></a>
+                            </li>
+                        </ul>
+
+                    </div>
+                </li>
+            }
+
+            <!--ARICS Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">filter_tilt_shift</i><span class="menu-title" data-i18n="">ARICS</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.ConductARICS")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-page="/ARICZ/UploadARICS" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Upload ARICS</span></a>
+                                </li>
+                            }
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICS.ConductARICS")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-page="/ARICZ/ConductARICS" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Direct Data Entry</span></a>
+                                </li>
+                            }
+                            <li><a asp-page="/aricz/aricshome" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARICS Summary</span></a></li>
+                            <li><a asp-controller="arics" asp-action="aricsapprovalagency" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARICS Approvals</span></a></li>
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End ARICS Menu Group-->
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.GIS.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">filter_tilt_shift</i><span class="menu-title" data-i18n="">GIS</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                            <li>
+                                <a target="_blank" asp-page="/nrsmap/Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>View GIS Roads</span></a>
+                            </li>
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KENHA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKENHA" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>KenHA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KURA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKURA" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KuRA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KERRA.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKERRA" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KeRRA GIS </span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.KWS.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexKWS" data-i18n="" class="collapsible-body"><i class="material-icons">radio_button_unchecked</i><span>KWS GIS</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Counties.GIS.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="GIS" asp-action="IndexCounties" data-i18n="" class="collapsible-body"><i class="material-icons"></i><span>Counties GIS</span></a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+            }
+
+            <!--Budgeting Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Finance.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">monetization_on</i><span class="menu-title" data-i18n="">Budgeting</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                            <li>
+                                <a asp-controller="Admin" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Financial Year</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/AllocationCodeUnitRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Allocation Ratios</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/AllocationRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Allocation Figures</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-controller="RevenueCollectionCodeUnitTypes" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection Types</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/RevenueCollectionCodeUnitRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection Code Units</span></a>
+                            </li>
+                            <li>
+                                <a class="collapsible-body" asp-page="/RevenueCollectionRx/index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Revenue Collection</span></a>
+                            </li>
+                            <li><a asp-controller="RevenueCollection" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Budget Approvals</span></a></li>
+                            <li><a asp-controller="Disbursement" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Disbursement</span></a></li>
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End Budgeting Menu Group-->
+            <!--Workplanning Menu Group-->
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">monetization_on</i><span class="menu-title" data-i18n="">Work Planning</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        <li>
+                            <a asp-controller="workplan" asp-action="Prioritization" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Prioritization</span></a>
+                        </li>
+                        <li>
+                            <a asp-controller="workplan" asp-action="GetRoadsForWorkPlan" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Road Work Plan</span></a>
+                        </li>
+                        <li>
+                            <a asp-controller="workplan" asp-action="Index" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>ARWP Summary</span></a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <!--End Workplanning Menu Group-->
+
+            <li class="active bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">invert_colors</i><span class="menu-title" data-i18n="">Contract Management</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                                                    @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Contractor.View")).Succeeded){<li><a class="collapsible-body" asp-controller="Admin" asp-action="Contractors" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contractors</span></a></li>}@if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICSYear.View")).Succeeded){<li><a class="collapsible-body" asp-controller="ARICS" asp-action="ARICSYearIndex" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Calendar Year</span></a></li>}
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="Admin" asp-action="Contractors" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contractors</span></a>
+                            </li>
+                        }
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="RoadWorkPackaging" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Work Packaging</span></a>
+                        </li>
+                        <li>
+                            <a class="collapsible-body" asp-controller="WorkPlanPackage" asp-action="ContractDetails" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contract Details</span></a>
+                        </li>
+                        <li>
+                            <a class="active collapsible-body" asp-controller="WorkPlanPackage" asp-action="ProjectProgressDetails" asp-route-id="0" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Project Progress</span></a>
+                        </li>
+
+                    </ul>
+                </div>
+            </li>
+
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Reports" asp-action="index"><i class="material-icons">import_contacts</i><span class="menu-title" data-i18n="">Report Management</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="waves-effect waves-cyan " asp-controller="Issue" asp-action="Index"><i class="material-icons">chat</i><span class="menu-title" data-i18n="">Complaints / Issues</span></a>
+            </li>
+
+            <li class="bold">
+                <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">invert_colors</i><span class="menu-title" data-i18n="">Training</span></a>
+                <div class="collapsible-body">
+                    <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.QuarterCodeList.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-page="/QuarterCodeListRx/Index" data-i18n=""><i class="material-icons"></i><span>Quarter Code List</span></a>
+                            </li>
+                        }
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.QuarterCodeUnit.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-page="/QuarterCodeUnitRx/Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Quarter Code Unit</span></a>
+                            </li>
+                        }
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.TrainingCourse.View")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="TrainingCourses"
+                                   asp-action="Index" data-i18n="">
+                                    <i class="material-icons">radio_button_unchecked</i>
+                                    <span>Courses</span>
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a class="collapsible-body" asp-page="/TrainingRx/Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Training</span></a>
+                        </li>
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Training.Report")).Succeeded)
+                        {
+                            <li>
+                                <a class="collapsible-body" asp-controller="Training" asp-action="Index" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Training Report</span></a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </li>
+
+            <!--Administration Menu Group-->
+            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Administrator.Role.View")).Succeeded)
+            {
+                <li class="bold">
+                    <a class="collapsible-header waves-effect waves-cyan " href="#"><i class="material-icons">add_to_queue</i><span class="menu-title" data-i18n="">Admin</span></a>
+                    <div class="collapsible-body">
+                        <ul class="collapsible collapsible-sub" data-collapsible="accordion">
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ActivityGroup.View")).Succeeded)
+                            {
+                                <li>
+                                    <a asp-controller="Admin" asp-action="UnitCost" class="collapsible-body" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Activity Code List</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundingSource.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="FundingSources" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Funding Sources</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.FundType.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="FundTypes" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Fund Types</span></a>
+                                </li>
+                            }
+
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Authority.View")).Succeeded)
+                            {
+                                <li>
+                                    <a class="collapsible-body" asp-controller="Admin" asp-action="Authorities" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Authorities</span></a>
+                                </li>
+                            }
+
+                                                        @if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.Contractor.View")).Succeeded){<li><a class="collapsible-body" asp-controller="Admin" asp-action="Contractors" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Contractors</span></a></li>}@if ((await AuthorizationService.AuthorizeAsync(User, "Permissions.ARICSYear.View")).Succeeded){<li><a class="collapsible-body" asp-controller="ARICS" asp-action="ARICSYearIndex" data-i18n=""><i class="material-icons">radio_button_unchecked</i><span>Calendar Year</span></a></li>}
+                        </ul>
+                    </div>
+                </li>
+            }
+            <!--End Administration Menu Group-->
+        </ul>
+        <div class="navigation-background"></div>
+        <a class="sidenav-trigger btn-sidenav-toggle btn-floating btn-medium waves-effect waves-light hide-on-large-only" href="#" data-target="slide-out"><i class="material-icons">menu</i></a>
+    </aside>
+    <!-- END: SideNav-->
+}
+
+
+<!-- Content Area Starts -->
+<div class="chat-application">
+    <div class="chat-content-head">
+        <div class="header-details">
+            <h5 class="m-0 sidebar-title">Financial ProgressRreporting</h5>
+        </div>
+    </div>
+
+    <!-- Scroll - vertical, dynamic height -->
+    <div class="row">
+        <div class="col s12 m12 l12">
+            <div class="card">
+                <div class="card-content pb-1">
+                    <div class="row">
+                        <div class="col s12 m12 l12">
+                            <a class="waves-effect waves-light btn-small" asp-controller="WorkPlanPackage" asp-action="ProjectProgressDetails" asp-route-id="0"><i class="material-icons left">arrow_back</i> Back to Progress Summary</a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-content">
+                    <div class="row" id="product-four">
+                        <div class="col m10 offset-s4">
+                            <h6 class="strong">@Model.FinancialProgress.Authority.Name.ToUpper() ANNUAL ROAD WORKS PROGRAMME FINANCIAL REPORT </h6>
+                            <div class="row">
+                                <div class="col s3"><p class="black-text strong">AGENCY CODE: </p></div>
+                                <div class="col s3"><span class="green-text strong">@Model.FinancialProgress.Authority.Code.ToUpper()</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="col s3"><p class="black-text strong">FINANCIAL YEAR :  </p></div>
+                                <div class="col s3"><span class="green-text strong">@Model.FinancialProgress.FinancialYear.Code.ToUpper()</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12 m12 l12">
+            <div class="card">
+                <div id="editWorkPackage" class="card-content">
+                    <h5 class="m-0 sidebar-title">Supply details of the report below</h5>
+                    <div class="divider"></div>
+                    <br />
+                    <form enctype="multipart/form-data" id="contractProgressForm" class="formValidate">
+                        @Html.HiddenFor(m => m.FinancialProgress.ID)
+                        @if (Model.FinancialProgress.ID > 0)
+                        {
+                            <div class="row">
+                                <div class="col s2 input-field">
+                                    @Html.DropDownListFor(m => m.FinancialProgress.FinancialYearId, ViewBag.YearList as SelectList, "Select Year", new { @disabled = "disabled" })
+                                </div>
+                                <div class="col s2 input-field">
+                                    @Html.DropDownListFor(m => m.FinancialProgress.MonthCodeId, ViewBag.MonthCodeList as SelectList, "Select Month", new { @disabled = "disabled" })
+                                </div>
+                                <div class="col s2 input-field">
+                                    @Html.TextBoxFor(m => m.FinancialProgress.OpeningBalance, new { @readonly = "readonly" })
+                                    @Html.LabelFor(m => m.FinancialProgress.OpeningBalance, "Opening Balance")
+                                </div>
+                                <div class="col s2 input-field">
+
+
+                                    @Html.TextBoxFor(m => m.FinancialProgress.ClosingBalance, new { @readonly = "readonly" })
+                                    @Html.LabelFor(m => m.FinancialProgress.ClosingBalance, "Closing balance")
+                                </div>
+                                <div class="input-field col s2">
+                                    @Html.TextBoxFor(m => m.FinancialProgress.FinancialReceipts, new { @readonly = "readonly" })
+                                    @Html.LabelFor(m => m.FinancialProgress.FinancialReceipts, "Receipts")
+                                </div>
+                                <div class="input-field col s2">
+                                    @Html.TextBoxFor(m => m.FinancialProgress.FinancialExpenditure, new { @readonly = "readonly" })
+                                    @Html.LabelFor(m => m.FinancialProgress.FinancialExpenditure, "Expenditure")
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row">
+                                <div class="col s2 input-field">
+                                    @Html.DropDownListFor(m => m.FinancialProgress.FinancialYearId, ViewBag.YearList as SelectList, "Please Select Year", new { @disabled = "disabled" })
+                                    @Html.HiddenFor(m => m.FinancialProgress.FinancialYearId)
+                                </div>
+                                <div class="col s2 input-field">
+
+                                    @Html.DropDownListFor(m => m.FinancialProgress.MonthCodeId, ViewBag.MonthCodeList as SelectList)
+                                </div>
+                                <div class="input-field col s2">
+                                    @Html.TextBoxFor(m => m.FinancialProgress.OpeningBalance, new { @class = "validate" })
+                                    @Html.LabelFor(m => m.FinancialProgress.OpeningBalance, "Opening Balance")
+                                </div>
+                                <div class="input-field col s2">
+                                    @Html.TextBoxFor(m => m.FinancialProgress.FinancialReceipts, new { @class = "validate" })
+                                    @Html.LabelFor(m => m.FinancialProgress.FinancialReceipts, "Receipts")
+                                </div>
+                                <div class="input-field col s2">
+                                    @Html.TextBoxFor(m => m.FinancialProgress.FinancialExpenditure, new { @class = "validate" })
+                                    @Html.LabelFor(m => m.FinancialProgress.FinancialExpenditure, "Expenditure")
+                                </div>
+                                <div class="input-field col s2">
+                                    @Html.TextBoxFor(m => m.FinancialProgress.ClosingBalance, new { @class = "validate" })
+                                    @Html.LabelFor(m => m.FinancialProgress.ClosingBalance, "Closing balance")
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="input-field col s6">
+                                    <div class="row">
+                                        <div class="input-field  col s4">
+                                            <p class="strong">Upload Bank Reconciliation File</p>
+                                        </div>
+                                        <div class="input-field col s8" style="height:85px;">
+                                            @Html.TextBoxFor(m => m.BankReconFile, new { @class = "dropify", type = "file", data_allowed_file_extensions = "pdf doc docx", aria_required = "true", @required = "required" })
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (Model.FinancialProgress.Authority.Type == 2)
+                                {
+                                    <div class="input-field col s6">
+                                        <div class="row">
+                                            <div class="input-field  col s2">
+                                                <p>Upload Annual Financial Statement</p>
+                                            </div>
+                                            <div class="input-field col s3">
+                                                @Html.TextBoxFor(m => m.FinancialStatetement, new { @class = "dropify", type = "file", data_allowed_file_extensions = "pdf doc docx", aria_required = "true", @required = "required" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+                            <div class="row">
+                                <div class="input-field col s12">
+                                    <div class="card-footer card-alert align-right">
+                                        <div class="card-action">
+                                            <a class="waves-effect waves-light btn-small right" href="#" onclick="SaveWorkplanPackageProgress()">Create Quarter Progress </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col s12 m12 l12">
+            <div class="card">
+                <div class="card-content">
+                    <h4 class="card-title">
+                        Quarterly Financial Progress Reports
+                    </h4>
+                    <table id="data-table-packages" class="striped display" role="grid">
+                        <thead>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th colspan="3">QUARTER 1</th>
+                                <th colspan="3">QUARTER 2</th>
+                                <th colspan="3">QUARTER 3</th>
+                                <th colspan="3">QUARTER 4</th>
+                                <th>&nbsp;</th>
+                            </tr>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th>JULY</th>
+                                <th>AUGUST</th>
+                                <th>SEPTEMBER</th>
+                                <th>OCTOBER</th>
+                                <th>NOVEMBER</th>
+                                <th>DECEMBER</th>
+                                <th>JANUARY</th>
+                                <th>FEBRUARY</th>
+                                <th>MARCH</th>
+                                <th>APRIL</th>
+                                <th>MAY</th>
+                                <th>JUNE</th>
+                                <th>TOTAL</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr role="row">
+                                <td>
+                                </td>
+
+                                <td>KSHs</td>
+                                <td>KSHs</td>
+                                <td>KSHs</td>
+                                <td>KSHs</td>
+                                <td>KSHs</td>
+                                <td>KSHs</td>
+                                <td>KSHs</td>
+                                <td>KSHs</td>
+                                <td>KSHs</td>
+                                <td>KSHs</td>
+                                <td>KSHs</td>
+                                <td>KSHs</td>
+                                <td>KSHs</td>
+                            </tr>
+                            <tr><td colspan="15"><div class="divider"></div></td></tr>
+                            <tr role="row">
+                                <td>Opening Balance as at…..</td>
+
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault().OpeningBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault().OpeningBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault().OpeningBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault().OpeningBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault().OpeningBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault().OpeningBalance.ToString("N") : "0.00")</td>
+
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault().OpeningBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault().OpeningBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault().OpeningBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault().OpeningBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault().OpeningBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault().OpeningBalance.ToString("N") : "0.00")</td>
+
+                                <td>@(Model.FinancialProgressList.Sum(p => p.OpeningBalance).ToString("N"))</td>
+
+
+                            </tr>
+                            <tr role="row">
+                                <td>Receipts </td>
+
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault().FinancialReceipts.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault().FinancialReceipts.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault().FinancialReceipts.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault().FinancialReceipts.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault().FinancialReceipts.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault().FinancialReceipts.ToString("N") : "0.00")</td>
+
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault().FinancialReceipts.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault().FinancialReceipts.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault().FinancialReceipts.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault().FinancialReceipts.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault().FinancialReceipts.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault().FinancialReceipts.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Sum(p => p.FinancialReceipts).ToString("N"))</td>
+                            </tr>
+                            <tr role="row">
+                                <td>Expenditure</td>
+
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault().FinancialExpenditure.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault().FinancialExpenditure.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault().FinancialExpenditure.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault().FinancialExpenditure.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault().FinancialExpenditure.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault().FinancialExpenditure.ToString("N") : "0.00")</td>
+
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault().FinancialExpenditure.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault().FinancialExpenditure.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault().FinancialExpenditure.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault().FinancialExpenditure.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault().FinancialExpenditure.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault().FinancialExpenditure.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Sum(p => p.FinancialExpenditure).ToString("N"))</td>
+                            </tr>
+                            <tr role="row">
+                                <td>Closing balance as at..</td>
+
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault().ClosingBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault().ClosingBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault().ClosingBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault().ClosingBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault().ClosingBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault().ClosingBalance.ToString("N") : "0.00")</td>
+
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault().ClosingBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault().ClosingBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault().ClosingBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault().ClosingBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault().ClosingBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault() != null ? Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault().ClosingBalance.ToString("N") : "0.00")</td>
+                                <td>@(Model.FinancialProgressList.Sum(p => p.ClosingBalance).ToString("N"))</td>
+                            </tr>
+
+
+                            <tr>
+                                <td>&nbsp;</td>
+
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault() != null)
+                                    {
+                                        <a asp-controller="WorkPlanPackage" asp-action="FinancialProgressDetails" asp-route-authorityId="@ViewBag.Authority.ID" asp-route-progressEntryId="@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault().ID"><i class="material-icons pink-text">mode_edit</i></a> <span>&nbsp;</span>
+                                        <a href="#!" onclick="ConfirmDelete(@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault().ID)"><i class="material-icons pink-text">clear</i></a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault() != null)
+                                    {
+                                        <a asp-controller="WorkPlanPackage" asp-action="FinancialProgressDetails" asp-route-authorityId="@ViewBag.Authority.ID" asp-route-progressEntryId="@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault().ID"><i class="material-icons pink-text">mode_edit</i></a> <span>&nbsp;</span>
+                                        <a href="#!" onclick="ConfirmDelete(@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault().ID)"><i class="material-icons pink-text">clear</i></a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault() != null)
+                                    {
+                                        <a asp-controller="WorkPlanPackage" asp-action="FinancialProgressDetails" asp-route-authorityId="@ViewBag.Authority.ID" asp-route-progressEntryId="@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault().ID"><i class="material-icons pink-text">mode_edit</i></a> <span>&nbsp;</span>
+                                        <a href="#!" onclick="ConfirmDelete(@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault().ID)"><i class="material-icons pink-text">clear</i></a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault() != null)
+                                    {
+                                        <a asp-controller="WorkPlanPackage" asp-action="FinancialProgressDetails" asp-route-authorityId="@ViewBag.Authority.ID" asp-route-progressEntryId="@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault().ID"><i class="material-icons pink-text">mode_edit</i></a> <span>&nbsp;</span>
+                                        <a href="#!" onclick="ConfirmDelete(@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault().ID)"><i class="material-icons pink-text">clear</i></a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault() != null)
+                                    {
+                                        <a asp-controller="WorkPlanPackage" asp-action="FinancialProgressDetails" asp-route-authorityId="@ViewBag.Authority.ID" asp-route-progressEntryId="@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault().ID"><i class="material-icons pink-text">mode_edit</i></a> <span>&nbsp;</span>
+                                        <a href="#!" onclick="ConfirmDelete(@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault().ID)"><i class="material-icons pink-text">clear</i></a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault() != null)
+                                    {
+                                        <a asp-controller="WorkPlanPackage" asp-action="FinancialProgressDetails" asp-route-authorityId="@ViewBag.Authority.ID" asp-route-progressEntryId="@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault().ID"><i class="material-icons pink-text">mode_edit</i></a> <span>&nbsp;</span>
+                                        <a href="#!" onclick="ConfirmDelete(@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault().ID)"><i class="material-icons pink-text">clear</i></a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault() != null)
+                                    {
+                                        <a asp-controller="WorkPlanPackage" asp-action="FinancialProgressDetails" asp-route-authorityId="@ViewBag.Authority.ID" asp-route-progressEntryId="@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault().ID"><i class="material-icons pink-text">mode_edit</i></a> <span>&nbsp;</span>
+                                        <a href="#!" onclick="ConfirmDelete(@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault().ID)"><i class="material-icons pink-text">clear</i></a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault() != null)
+                                    {
+                                        <a asp-controller="WorkPlanPackage" asp-action="FinancialProgressDetails" asp-route-authorityId="@ViewBag.Authority.ID" asp-route-progressEntryId="@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault().ID"><i class="material-icons pink-text">mode_edit</i></a> <span>&nbsp;</span>
+                                        <a href="#!" onclick="ConfirmDelete(@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault().ID)"><i class="material-icons pink-text">clear</i></a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault() != null)
+                                    {
+                                        <a asp-controller="WorkPlanPackage" asp-action="FinancialProgressDetails" asp-route-authorityId="@ViewBag.Authority.ID" asp-route-progressEntryId="@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault().ID"><i class="material-icons pink-text">mode_edit</i></a> <span>&nbsp;</span>
+                                        <a href="#!" onclick="ConfirmDelete(@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault().ID)"><i class="material-icons pink-text">clear</i></a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault() != null)
+                                    {
+                                        <a asp-controller="WorkPlanPackage" asp-action="FinancialProgressDetails" asp-route-authorityId="@ViewBag.Authority.ID" asp-route-progressEntryId="@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault().ID"><i class="material-icons pink-text">mode_edit</i></a> <span>&nbsp;</span>
+                                        <a href="#!" onclick="ConfirmDelete(@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault().ID)"><i class="material-icons pink-text">clear</i></a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault() != null)
+                                    {
+                                        <a asp-controller="WorkPlanPackage" asp-action="FinancialProgressDetails" asp-route-authorityId="@ViewBag.Authority.ID" asp-route-progressEntryId="@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault().ID"><i class="material-icons pink-text">mode_edit</i></a> <span>&nbsp;</span>
+                                        <a href="#!" onclick="ConfirmDelete(@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault().ID)"><i class="material-icons pink-text">clear</i></a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault() != null)
+                                    {
+                                        <a asp-controller="WorkPlanPackage" asp-action="FinancialProgressDetails" asp-route-authorityId="@ViewBag.Authority.ID" asp-route-progressEntryId="@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault().ID"><i class="material-icons pink-text">mode_edit</i></a> <span>&nbsp;</span>
+                                        <a href="#!" onclick="ConfirmDelete(@Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault().ID)"><i class="material-icons pink-text">clear</i></a>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+
+                            <tr role="row">
+
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressBankDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressBankDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressBankDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressBankDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressBankDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressBankDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressBankDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressBankDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressBankDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressBankDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressBankDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressBankDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr role="row">
+
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressGrantDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("JUL")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressGrantDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("AUG")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressGrantDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("SEP")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressGrantDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("OCT")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressGrantDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("NOV")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressGrantDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("DEC")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressGrantDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("JAN")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressGrantDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("FEB")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressGrantDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("MAR")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressGrantDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("APR")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressGrantDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("MAY")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (Model.FinancialProgressList.Where(p => p.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault() != null)
+                                    {
+                                        @if (!string.IsNullOrEmpty((Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault().BankReconFileName)))
+                                        {
+                                            <a asp-controller="WorkPlanPackage" asp-action="DownLoadProgressGrantDocument" asp-route-bankFileName="@Model.FinancialProgressList.Where(P => P.MonthCode.Code.ToUpper().Equals("JUN")).SingleOrDefault().BankReconFileName" class="secondary-content"> Download</a>
+                                        }
+                                        else
+                                        {
+                                            <span>&nbsp;</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>&nbsp;</span>
+                                    }
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card">
+                <div class="row">
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <div class="card-footer card-alert align-right">
+                                <a class="waves-effect waves-light btn-small" asp-controller="WorkPlanPackage" asp-action="ProjectProgressDetails" asp-route-id="0"><i class="material-icons left">arrow_back</i> Back to Progress Summary</a>
+                                <a class="waves-effect waves-light btn-small right" onclick="DownloadProgress()"><i class="material-icons right">file_download</i> Download Report</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer card-alert white-text  align-right">
+            <div class="card-content">
+                <!-- <a class="waves-effect waves-light btn" href="#!"><i class="material-icons right">gps_fixed</i> Add Record</a>
+                <a class="waves-effect waves-light btn" href="#!"><i class="material-icons right">gps_fixed</i> View Work Plan Cost</a>
+                <a class="waves-effect waves-light btn" href="#!"><i class="material-icons right">gps_fixed</i> Approve All</a>-->
+                <!--My Details View-->
+                <div id="modalViewPackageId" class="modal">
+                    <div class="modal-content grey-text text-darken-1" id="modalViewBodyPackageDiv">
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="row">
+                            <div id="btnSubmit" class="col s8 offset-s2">
+                                <a href="#!" class="modal-close waves-effect waves-light btn-flat">Cancel</a>
+                                <a href="#!" class="waves-effect waves-light btn-small" onclick="SaveEditPackage()"><i class="material-icons left">cloud</i>Save Package</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer card-alert white-text  align-right">
+            <div class="card-content">
+                <!-- <a class="waves-effect waves-light btn" href="#"><i class="material-icons right">gps_fixed</i> Add Record</a>
+                <a class="waves-effect waves-light btn" href="#"><i class="material-icons right">gps_fixed</i> View Work Plan Cost</a>
+                <a class="waves-effect waves-light btn" href="#"><i class="material-icons right">gps_fixed</i> Approve All</a>-->
+                <!--My Details View-->
+                <div id="modalViewId" class="modal bottom-sheet">
+                    <div class="modal-content grey-text text-darken-1" id="modalViewBodyDiv">
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="row">
+                            <div id="btnSubmit" class="col s8 offset-s2">
+                                <a href="#" class="modal-close waves-effect waves-light btn-flat">Cancel</a>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer card-alert white-text  align-right">
+            <div class="card-content">
+                <!-- <a class="waves-effect waves-light btn" href="#"><i class="material-icons right">gps_fixed</i> Add Record</a>
+                <a class="waves-effect waves-light btn" href="#"><i class="material-icons right">gps_fixed</i> View Work Plan Cost</a>
+                <a class="waves-effect waves-light btn" href="#"><i class="material-icons right">gps_fixed</i> Approve All</a>-->
+                <!--My Details View-->
+                <div id="modalViewPackageQuantityId" class="modal">
+                    <div class="modal-content grey-text text-darken-1" id="modalViewBodyPackageQuantityDiv">
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="row">
+                            <div id="btnSubmit" class="col s8 offset-s2">
+                                <a href="#" class="modal-close waves-effect waves-light btn-flat">Cancel</a>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section vendorJS
+{
+    <script src="~/asset_default/app-assets/vendors/data-tables/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    <script src="~/asset_default/app-assets/vendors/data-tables/extensions/responsive/js/dataTables.responsive.min.js" type="text/javascript"></script>
+    <script src="~/asset_default/app-assets/vendors/sweetalert/sweetalert.min.js" type="text/javascript"></script>
+    <script src="~/asset_default/app-assets/vendors/jquery-validation/jquery.validate.min.js"></script>
+    <script src="~/asset_default/app-assets/js/scripts/form-file-uploads.js"></script>
+    <script src="~/asset_default/app-assets/vendors/dropify/js/dropify.min.js"></script>
+}
+
+@section scripts
+
+{
+
+    <script src="~/asset_default/app-assets/js/scripts/app-contacts.js" type="text/javascript"></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+
+            $.ajax({
+                method: "POST",
+                url: "/UserManagement/GetShortName",
+                datatype: "json",
+                data: {}
+            })
+                .done(function (data) {
+                    //write json array object
+                    console.log(data);
+                    //Set Road Section ID to null
+
+                    $("#idSpan").text(data.sn);
+                    var Val1 = $("#idHomeAuthority").text();
+                    $("#idHomeAuthority").text(data.authorityCode + "-" + data.authorityName);
+                });
+        });
+    </script>
+}
+<script type="text/javascript">
+
+    var SaveWorkplanPackageProgress = function () {
+        if ($('#BankReconFile').length) { //check if element exists
+            var fileName = $('#BankReconFile').val().replace('C:\\fakepath\\', '');
+            var fileNameExtension = "." + fileName.split(".").pop();
+            var fileNameBase = fileName.substring(0, fileName.length - fileNameExtension.length);
+
+            if (fileNameBase.length <= 150) { //limit file name size to 100 characters
+                var form = $('#contractProgressForm')[0];
+                var formData = new FormData(form);
+                event.preventDefault();
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: "/WorkPlanPackage/SaveWorkplanPackageProgress",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            if (data.success) {
+                                //$("#modalViewApprovalId").modal('close');
+                                swal({
+                                    title: "Success",
+                                    text: "Record has been submitted successfully!",
+                                    timer: 2500,
+                                    icon: "success",
+                                    buttons: false
+                                }).then(function () {
+                                    window.location.href = data.href;
+                                });
+                            }
+                            else {
+                                swal(data.message, {
+                                    title: 'Error Occured',
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    }
+                );
+            }
+            else {
+                swal({
+                    title: 'Warning',
+                    icon: 'warning',
+                    text: "The filename length has exceeded 150 characters. Please check!"
+                })
+            }
+        }
+        else {
+            swal({
+                title: 'Warning',
+                icon: 'warning',
+                text: "Please upload supporting reconciliation documents!"
+            })
+        }
+    }
+
+    //delete the record
+    var ConfirmDelete = function (financialProgressID) {
+        swal({
+            title: "Are you sure?",
+            text: "The entries for the selected month will be removed!",
+            icon: 'warning',
+            dangerMode: true,
+            buttons: {
+                cancel: 'No, Please!',
+                delete: 'Yes, Delete It'
+            }
+        }).then(function (willDelete) {
+            if (willDelete) {
+                DeleteRecord(financialProgressID);
+            }
+            else {
+                swal("Record has not removed", {
+                    title: 'Cancelled',
+                    icon: "error",
+                });
+            }
+        });
+    }
+
+    var DeleteRecord = function (financialProgressID) {
+        $.ajax(
+            {
+                type: "POST",
+                url: "/WorkPlanPackage/DeleteWorkplanPackageProgress",
+                data: { financialProgressID: financialProgressID },
+                success: function (data) {
+                    console.log(data);
+                    if (data.success) {
+                        window.location.href = data.href;
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Cancelled',
+                            icon: "error",
+                        });
+                    }
+                }
+            });
+    }
+
+    var DownloadProgress = function () {
+        var authorityId = @ViewBag.Authority.ID;
+        var fYearId = 0;
+
+
+        $.ajax({
+            cache: false,
+            url: '/WorkPlanPackage/DownloadQuarterlyProgressSummary?authorityId=' + authorityId + "&financialYearId=" + fYearId,
+            success: function (data) {
+                if (data.success) {
+                    window.location.href = data.href;
+                }
+                else {
+                    swal(data.message, {
+                        title: 'Cancelled',
+                        icon: 'error',
+                    });
+                }
+            }
+        });
+
+    }
+
+
+
+</script>

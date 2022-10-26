@@ -1,0 +1,110 @@
+﻿@model APRP.Web.Domain.Models.PlanActivityPBC
+
+
+
+<div class="section card-content">
+
+    @{
+
+        <h5>Set values for activity : @Model.ItemActivityPBC.Description</h5>
+
+
+    }
+    <div id="button-trigger" class="card card card-default scrollspy border-radius-6 fixed-width">
+        <div class="card-content p-4">
+            <form id="ActivityWorkplanForm">
+                @Html.HiddenFor(m => m.ID)
+                <div class="row">
+                    <div class="input-field col s8 offset-s2">
+                        @Html.TextBoxFor(m => m.ItemActivityPBC.Description, new { @readonly = "readonly", @class = "active" })
+                        @Html.LabelFor(m => m.ItemActivityPBC.Description, new { @class = "active" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s8 offset-s2">
+                        @Html.DropDownListFor(m => m.ItemActivityPBC.TechnologyId, ViewBag.TechnologyList as SelectList, "Please choose")
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s8 offset-s2">
+                        @Html.TextBoxFor(m => m.PlannedKM, new { @class = "active" })
+                        @Html.LabelFor(m => m.PlannedKM, new { @class = "active" })
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s8 offset-s2">
+                        @Html.TextBoxFor(m => m.CostPerKMPerMonth, new { @class = "validate active" })
+                        @Html.LabelFor(m => m.CostPerKMPerMonth, new { @class = "active" })
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+    //submit the form saving : UpdatePlanActivity
+
+    var UpdatePlanActivityPBC = function () {
+        var sendForm = $("#ActivityWorkplanForm").serialize();
+
+        $.ajax(
+            {
+                type: "POST",
+                url: "/Workplan/UpdatePlanActivityPBC",
+                data: sendForm,
+                success: function (data) {
+                    if (data.success) {
+                        //$("#modalViewPlanPBCId").modal('close');
+                        swal({
+                            title: "Success",
+                            text: "PBC Item Activity updated successfully!",
+                            timer: 1700,
+                            icon: "success",
+                            buttons: false
+                        }).then(function () {
+                            window.location.href = data.href;
+                        });
+
+                    }
+                    else {
+                        swal(data.message, {
+                            title: 'Error Occured',
+                            icon: "error",
+                        });
+                    }
+                }
+
+            }
+        );
+    }
+
+    $(document).ready(function () {
+        $('select').formSelect();
+
+        $("#Rate").keyup(function () { // run anytime the value changes
+            var firstValue = parseFloat($('#Rate').val()); // get value of field
+            var secondValue = parseFloat($('#Quantity').val()); // convert it to a float
+            // var thirdValue = parseFloat($('#third').val());
+            /// var fourthValue = parseFloat($('#fourth').val());
+            $("#Amount").val(firstValue * secondValue);
+            // add them and output it
+        });
+
+        $("#Quantity").keyup(function () {
+            var rate = parseFloat($('#Rate').val());
+            var qty = parseFloat($('#Quantity').val());
+            $("#Amount").val(rate * qty);
+
+        });
+
+
+    });
+
+
+</script>
