@@ -1,5 +1,6 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
+#Stage 1: Define base image that will be used for production
 #Generate runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
@@ -18,6 +19,7 @@ RUN dotnet restore "APRP.Web/APRP.Web.csproj"
 # Copy the project files to build our release
 COPY . .
 WORKDIR "/src/APRP.Web"
+#RUN mkdir -p "/src/APRP.Web/wwwroot/uploads"
 RUN dotnet build "APRP.Web.csproj" -c Release -o /app/build
 
 #Publish our build in readiness for deployment

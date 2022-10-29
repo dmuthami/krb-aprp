@@ -16,8 +16,10 @@ namespace APRP.Web.Domain.Models
         [Display(Name = "Road Class")]
         public RoadClassCodeUnit RoadClassCodeUnit { get; set; }
 
+    
         [Display(Name = "Surface Type")]
         public long SurfaceTypeId { get; set; }
+
         [Display(Name = "Surface Type")]
         public SurfaceType SurfaceType { get; set; }
 

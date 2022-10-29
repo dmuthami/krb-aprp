@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
+using System.Data.SqlClient;
 
 internal class Program
 {
@@ -35,9 +36,26 @@ internal class Program
         //builder.Services.AddIdentity<ApplicationUser, IdentityRole>();
 
         #region Database
-        var psqlConnectionString = builder.Configuration.GetConnectionString("WebLegacyDatabase");
+        var whichDBMS = builder.Configuration.GetConnectionString("DBMS"); //Read Config File
+        if (whichDBMS == "PSQL")
+        {
+            var psqlConnectionString = builder.Configuration.GetConnectionString("WebLegacyDatabase");
         services.AddDbContextPool<AppDbContext>(options =>
             options.UseNpgsql(psqlConnectionString, o => o.UseNetTopologySuite()));
+        }else
+        {
+            var sqlConnectionString = builder.Configuration.GetConnectionString("AppConnectionString");
+            SqlConnectionStringBuilder builderr = new SqlConnectionStringBuilder();
+            builderr.ConnectionString = sqlConnectionString;
+            services.AddDbContextPool<AppDbContext>(options =>
+                    options.UseSqlServer(/*
+                        sqlConnectionString
+                        builder.ConnectionString
+                        */builderr.ConnectionString,
+                    x => x.UseNetTopologySuite()
+                ));
+        }
+
 
         #endregion
 
@@ -53,6 +71,11 @@ internal class Program
         #endregion
 
         #region File Upload & Download
+        string path = Path.Combine(builder.Environment.WebRootPath, "uploads");
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
         services.AddSingleton<IFileProvider>(
         new PhysicalFileProvider(
             Path.Combine(builder.Environment.WebRootPath, "uploads")));

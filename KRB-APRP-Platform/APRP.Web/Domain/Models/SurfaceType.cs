@@ -17,5 +17,7 @@ namespace APRP.Web.Domain.Models
         [StringLength(75)]
         public string Description { get; set; }
 
+        public ICollection<RoadClassification> RoadClassifications { get; set; }
+
     }
 }
